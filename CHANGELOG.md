@@ -7,8 +7,8 @@ Format, [Keep a Changelog](https://keepachangelog.com/tr/1.0.0/) standartlarına
 ---
 
 ## 📌 Sürüm Politikası ve Otomasyon Kuralı
-- **Ana Sürüm:** `v2.0` (Bağımsız Masaüstü CAD Stüdyosu).
-- **Alt Sürüm Artırma Kuralı:** Yapılan her yeni hata düzeltmesi, iyileştirme veya yeni özellikte sürüm numarası otomatik olarak `2.x` (`2.1`, `2.2`, `2.3` ...) şeklinde artırılır.
+- **Ana Sürüm:** `v3.x` (Bağımsız Masaüstü CAD Stüdyosu).
+- **Alt Sürüm Artırma Kuralı:** Yapılan her yeni hata düzeltmesi, iyileştirme veya yeni özellikte sürüm numarası otomatik olarak `3.x` (`3.1`, `3.2`, `3.3` ...) şeklinde artırılır.
 - **Tarih & Saat:** Her sürüme güncel tarih ve saat damgası eklenir, `version.json` dosyası güncellenir ve uygulama arayüzünün sol alt köşesindeki rozette fare ile üzerine gelindiğinde anlık olarak gösterilir.
 - **Otomasyon:** Antigravity asistanı her geliştirme adımında kullanıcı hatırlatmasına gerek kalmadan bu işlemi otomatik olarak gerçekleştirir.
 
