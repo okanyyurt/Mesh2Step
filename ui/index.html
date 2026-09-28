@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mesh2Step 3D Studio - Direct Mesh to STEP B-Rep</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Local Offline Three.js Assets -->
+  <script src="three.min.js"></script>
+  <script src="OrbitControls.js"></script>
+  <script src="i18n.js"></script>
+</head>
+<body>
+
+  <!-- Top App Header -->
+  <header class="app-header">
+    <div class="brand-section">
+      <div class="brand-icon">
+        <svg viewBox="0 0 24 24">
+          <polygon points="12 2 2 7 12 12 22 7 12 2" stroke="#000" stroke-width="1.5" fill="none" stroke-linejoin="round"/>
+          <polyline points="2 17 12 22 22 17" stroke="#000" stroke-width="1.5" fill="none" stroke-linejoin="round"/>
+          <polyline points="2 12 12 17 22 12" stroke="#000" stroke-width="1.5" fill="none" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <div class="brand-title" data-i18n="app_brand">MESH2STEP 3D STUDIO</div>
+          <div class="header-version-wrapper" id="header-version-wrapper" title="Mesh2Step 3D Studio">
+            <span class="version-pulse-dot"></span>
+            <span class="header-version-pill" id="header-version-tag" onclick="openAboutModal()" style="cursor: pointer;" title="Mesh2Step 3D Studio">v3.21</span>
+            <button class="header-about-pill-btn" id="btn-header-about" onclick="openAboutModal()" data-i18n-title="about_modal_btn_tip" title="Hakkında, Geliştirici &amp; GitHub Deposu">
+              <span class="about-icon">ℹ️</span>
+              <span class="about-label" data-i18n="btn_about">Hakkında</span>
+            </button>
+            <!-- Rich Hover Popover Card -->
+            <div class="version-hover-card" id="version-hover-card">
+              <div class="version-hover-header">
+                <span class="version-hover-app">MESH2STEP 3D STUDIO</span>
+                <span class="version-hover-tag" id="hover-tag-version">v3.21</span>
+              </div>
+              <div class="version-hover-body">
+                <div class="version-hover-row">
+                  <span class="version-hover-icon">📅</span>
+                  <span class="version-hover-lbl" data-i18n="hover_release">Yayınlanma:</span>
+                  <span class="version-hover-val" id="hover-datetime-val">28.09.2026 11:21</span>
+                </div>
+                <div class="version-hover-row">
+                  <span class="version-hover-icon">⚡</span>
+                  <span class="version-hover-lbl" data-i18n="hover_kernel">Motor:</span>
+                  <span class="version-hover-val">Titan CAD (100% B-Rep)</span>
+                </div>
+                <div class="version-hover-row">
+                  <span class="version-hover-icon">🟢</span>
+                  <span class="version-hover-lbl" data-i18n="hover_status">Durum:</span>
+                  <span class="version-hover-val highlight-green" data-i18n="hover_stable">Kararlı Dağıtım (Stable)</span>
+                </div>
+              </div>
+              <div class="version-hover-footer">
+                <button class="btn-hover-card-about" onclick="openAboutModal()">
+                  <span>✨</span> <span data-i18n="hover_open_about">Geliştirici &amp; Proje Hakkında</span> ➔
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="brand-subtitle" data-i18n="app_subtitle">Doğrudan Mesh → STEP B-Rep Katı Model Çevirici</div>
+      </div>
+    </div>
+
+    <div class="system-badge">
+      <div class="status-dot"></div>
+      <span id="gpu-status-text" data-i18n="gpu_scanning">⚡ Donanım Hızlandırma Taranıyor...</span>
+    </div>
+
+    <div class="header-actions">
+      <!-- Language Switcher (TR / EN) -->
+      <button class="btn btn-outline" id="btn-lang-toggle" onclick="toggleLanguage()" data-i18n-title="btn_lang_toggle_title" title="Dili Değiştir / Switch Language" style="min-width: 65px; font-weight: 600; padding: 6px 10px;">
+        <span id="lang-flag">🇹🇷</span> <span id="lang-code">TR</span>
+      </button>
+
+      <button class="btn btn-outline" id="btn-open-history" onclick="openHistoryModal()" data-i18n-title="btn_history_title" title="Geçmiş Dönüştürme Raporları ve Katı Modeller">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+        <span data-i18n="btn_history">📜 Geçmiş</span>
+      </button>
+
+      <button class="btn btn-outline" id="btn-open-settings" onclick="openSettingsModal()" data-i18n-title="btn_settings_title" title="Sistem, Donanım ve API Ayarları">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </svg>
+        <span data-i18n="btn_settings">⚙️ Ayarlar</span>
+      </button>
+
+      <button class="btn btn-primary" id="btn-open-file" data-i18n-title="title_open_model" title="Desteklenen formatlar: .stl, .3mf, .obj, .ply, .glb, .gltf, .off">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+        </svg>
+        <span data-i18n="btn_open_model">📂 Model Yükle</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- App Main Layout -->
+  <main class="app-container">
+
+    <!-- 3D Viewport Area -->
+    <div class="viewport-wrapper" id="viewport-wrapper">
+      <canvas id="webgl-canvas"></canvas>
+
+      <!-- Empty State / Drag & Drop Zone -->
+      <div class="empty-dropzone" id="empty-dropzone">
+        <div class="dropzone-card" id="dropzone-clickable">
+          <div class="dropzone-icon">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--accent-cyan)" stroke-width="1.5">
+              <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+              <polyline points="2 17 12 22 22 17"></polyline>
+              <polyline points="2 12 12 17 22 12"></polyline>
+            </svg>
+          </div>
+          <div class="dropzone-title" data-i18n="dropzone_title">3D Model Dosyasını Seçin veya Buraya Bırakın</div>
+          <div class="dropzone-desc" data-i18n="dropzone_sub">.stl, .3mf, .obj, .ply, .glb, .gltf, .off formatları doğrudan katı CAD B-Rep modeline dönüştürülür</div>
+          <button class="btn btn-primary" style="margin-top: 8px;">
+            <span data-i18n="btn_browse">📂 Bilgisayardan Dosya Seç</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Viewport Floating HUD (Top Center) -->
+      <div class="viewport-hud" id="viewport-hud" style="display: none;">
+        <div class="mode-toggle-group">
+          <button class="hud-btn active" data-mode="mesh" onclick="setViewMode('mesh')" data-i18n="hud_mesh" title="Girdi üçgen ağı ve tel kafes yapısını incele">
+            🔺 Mesh & Üçgenler
+          </button>
+          <button class="hud-btn" id="btn-view-solid" data-mode="solid" onclick="setViewMode('solid')" data-i18n="hud_solid" title="Dönüştürülmüş B-Rep katı modelini incele" style="display: none;">
+            💎 Katı Model (STEP)
+          </button>
+          <button class="hud-btn" id="btn-view-compare" data-mode="compare" onclick="setViewMode('compare')" data-i18n="hud_compare" title="Mesh ile Katı Modeli üst üste şeffaf karşılaştır" style="display: none;">
+            🔄 Üst Üste
+          </button>
+          <button class="hud-btn" id="btn-view-split" data-mode="split" onclick="setViewMode('split')" data-i18n="hud_split" title="Mesh ve Katı Modeli yan yana bitişik karşılaştır" style="display: none;">
+            ⏸️ Yan Yana
+          </button>
+        </div>
+
+        <div class="hud-divider"></div>
+
+        <div class="hud-tools">
+          <button class="tool-icon-btn active" id="btn-toggle-wireframe" onclick="toggleWireframe()" data-i18n-title="title_wireframe" title="Üçgen Tel Kafese Aç / Kapat">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="3" y1="9" x2="21" y2="9"></line>
+              <line x1="9" y1="21" x2="9" y2="9"></line>
+            </svg>
+          </button>
+          <button class="tool-icon-btn active" id="btn-toggle-edges" onclick="toggleSolidEdges()" data-i18n-title="title_edges" title="CAD B-Rep Kenarlarını Aç / Kapat">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+            </svg>
+          </button>
+          <button class="tool-icon-btn active" id="btn-toggle-grid" onclick="toggleGrid()" data-i18n-title="title_grid" title="Zemin Izgarasını Aç / Kapat">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+          </button>
+          <button class="tool-icon-btn" onclick="triggerTransform('lay_flat')" data-i18n-title="title_lay_flat" title="Tabana Oturt (En Geniş Yüzeyi Z=0 Düzlemine Yatır)">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 3v14M5 10l7 7 7-7M3 21h18"/>
+            </svg>
+          </button>
+          <button class="tool-icon-btn" id="btn-rotate-90" onclick="cycleRotate90()" data-i18n-title="title_rotate_90" title="Modeli 90° Döndür ve Tabana Oturt (Her tıklamada 90° yönlendirir)" style="display: flex; align-items: center; justify-content: center; gap: 2px; padding: 0 6px;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+            </svg>
+            <span style="font-size: 10px; font-weight: 700; letter-spacing: -0.5px;">90°</span>
+          </button>
+          <button class="tool-icon-btn" id="btn-scale-1000" onclick="triggerTransform('scale_1000')" data-i18n-title="title_scale_1000" title="1000x Büyüt (KIRI Engine / LiDAR Taramalarını Metreden Milimetre CAD Standardına Çevir)" style="display: flex; align-items: center; justify-content: center; padding: 0 4px;">
+            <span style="font-size: 9.5px; font-weight: 800; letter-spacing: -0.5px; color: var(--accent-cyan);">×1k</span>
+          </button>
+          <button class="tool-icon-btn active btn-toggle-3d-drag" id="btn-hud-toggle-3d-drag" onclick="toggle3DDragMode()" data-i18n-title="title_drag_mode" title="Serbest 3D Model Taşıma (Açık: Mouse ile modeli istediğiniz konuma serbestçe sürükleyin)">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0M14 10V4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v2M10 10.5V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v8M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/>
+            </svg>
+          </button>
+          <button class="tool-icon-btn" onclick="resetView()" data-i18n-title="title_reset_view" title="Görünüşü Modele Odakla">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <circle cx="12" cy="12" r="2"></circle>
+            </svg>
+          </button>
+        </div>
+
+        <div class="hud-divider hud-exploded-divider" id="hud-exploded-divider" style="display: none;"></div>
+
+        <!-- Multi-Body Separation & 3D Arrangement HUD -->
+        <div class="hud-exploded-group" id="hud-exploded-group" style="display: none;" title="Montaj gövdelerini 3D sahnede ayrıştırın, yan yana dizin ve mouse ile bağımsız taşıyın">
+          <span class="exploded-label" data-i18n="exploded_label">🧩 Ayrıştır:</span>
+          <input type="range" class="exploded-range" id="slider-exploded" min="0" max="100" value="0" step="1" oninput="onExplodedSliderChange(this.value)" title="Gövdeleri merkezden dışa doğru orantılı ayrıştır">
+          <span class="exploded-val" id="val-exploded">0%</span>
+
+          <div class="hud-mini-divider"></div>
+
+          <button class="btn-hud-action" id="btn-arrange-sidebyside" onclick="arrangeBodiesSideBySide()" data-i18n="btn_arrange_side" title="Tüm parçaları (Mesh veya Katı Model) yan yana yatay sırada aralıklı diz">
+            ↔️ Yan Yana Diz
+          </button>
+
+          <button class="btn-hud-action active btn-toggle-3d-drag" id="btn-toggle-3d-drag" onclick="toggle3DDragMode()" data-i18n="btn_toggle_3d_drag" title="Mouse ile 3D Model Taşıma Modu (Açık: 3D sahnede modele sol tıklayıp sürükleyin)">
+            🖐️ 3D Taşı
+          </button>
+
+          <button class="btn-hud-action btn-hud-reset" id="btn-reset-separation" onclick="resetBodyPositions()" data-i18n="btn_reset_pos" title="Tüm ayrıştırma ve 3D sürükleme konumlarını orijinal montaj pozisyonuna sıfırla">
+            🔄 Sıfırla
+          </button>
+        </div>
+      </div>
+
+      <!-- Side-by-side comparison indicator badge -->
+      <div class="split-hud-badge" id="split-hud-badge" style="display: none;">
+        <span class="badge-item mesh-badge" data-i18n="hud_split_left">🔺 Sol: Orijinal Mesh</span>
+        <span class="badge-divider">↔️</span>
+        <span class="badge-item solid-badge" data-i18n="hud_split_right">💎 Sağ: STEP Katı Model</span>
+        <button class="split-reset-btn" onclick="resetSplitPositions()" data-i18n="hud_split_reset" title="Mesh ve Katı model konumlarını yan yana başlangıç pozisyonuna sıfırla">
+          🔄 Konumları Sıfırla
+        </button>
+      </div>
+
+      <!-- Solo Component Inspection Floating HUD -->
+      <div class="solo-inspect-hud" id="solo-inspect-hud" style="display: none;">
+        <div class="solo-info">
+          <span class="solo-dot" id="solo-dot"></span>
+          <div class="solo-text-wrap">
+            <span class="solo-title" id="solo-title" data-i18n="solo_inspect_title">Gövde İnceleniyor</span>
+            <span class="solo-stats" id="solo-stats">0 faset</span>
+          </div>
+        </div>
+        <div class="solo-nav">
+          <button class="btn-micro btn-solo-nav" onclick="navigateSoloBody(-1)" data-i18n="btn_prev_body" title="Önceki Gövdeyi İncele">◀ Önceki</button>
+          <span class="solo-counter" id="solo-counter">1 / 1</span>
+          <button class="btn-micro btn-solo-nav" onclick="navigateSoloBody(1)" data-i18n="btn_next_body" title="Sonraki Gövdeyi İncele">Sonraki ▶</button>
+          <button class="btn-solo-exit" onclick="exitSoloInspect()" title="Tüm montaj görünümüne geri dön">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+            <span data-i18n="btn_exit_solo">Montaja Dön</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Floating Conversion Progress HUD (Bottom Center) -->
+      <div class="progress-card" id="progress-card">
+        <div class="progress-header">
+          <div class="progress-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent-cyan)" stroke-width="2">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+            </svg>
+            <span data-i18n="progress_converting">Katı Modele Dönüştürülüyor...</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div class="progress-percent" id="progress-percent">0%</div>
+            <button class="btn btn-cancel-sm" id="btn-cancel-conversion" data-i18n="btn_progress_cancel" title="Dönüştürme işlemini anında durdur">
+              🛑 Durdur
+            </button>
+          </div>
+        </div>
+        <div class="progress-bar-container">
+          <div class="progress-bar-fill" id="progress-bar-fill"></div>
+        </div>
+        <div class="progress-status-text" id="progress-status-text">İşlem başlatılıyor...</div>
+      </div>
+    </div>
+
+    <!-- Right Control & Inspection Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-tabs">
+        <button class="tab-btn active" data-tab="convert" data-i18n="tab_convert">🚀 Katı CAD</button>
+        <button class="tab-btn" data-tab="heal" id="tab-btn-heal" data-i18n="tab_heal">🪄 İyileştirme<span class="tab-badge-dot" id="tab-heal-dot" style="display: none;"></span></button>
+        <button class="tab-btn" data-tab="dfam" data-i18n="tab_dfam">📐 DfAM Analiz</button>
+        <button class="tab-btn" data-tab="ai" data-i18n="tab_ai">🤖 AI Asistan</button>
+      </div>
+
+      <div class="sidebar-content" id="tab-convert">
+
+        <!-- Model Info Card -->
+        <div class="card">
+          <div class="card-title">
+            <span data-i18n="card_model_info">Model Özellikleri</span>
+            <span id="stat-format" style="font-size: 11px; color: var(--accent-cyan); text-transform: none;">-</span>
+          </div>
+          <div class="stat-grid">
+            <div class="stat-box full-width">
+              <div class="stat-label" data-i18n="lbl_filename">Dosya Adı</div>
+              <div class="stat-value" id="stat-filename" style="font-size: 12px; word-break: break-all;" data-i18n="txt_no_model">Model yüklenmedi</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-label" data-i18n="lbl_triangles">Üçgen Sayısı</div>
+              <div class="stat-value highlight" id="stat-triangles">-</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-label" data-i18n="lbl_vertices">Nokta Sayısı</div>
+              <div class="stat-value" id="stat-vertices">-</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-label" data-i18n="lbl_filesize">Dosya Boyutu</div>
+              <div class="stat-value" id="stat-filesize">-</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-label" data-i18n="lbl_diagonal">Köşegen (Çap)</div>
+              <div class="stat-value" id="stat-diagonal">-</div>
+            </div>
+            <div class="stat-box full-width">
+              <div class="stat-label" data-i18n="lbl_dimensions">Boyutlar (Genişlik × Derinlik × Yükseklik)</div>
+              <div class="stat-value" id="stat-dimensions">-</div>
+            </div>
+            <div id="meter-scale-warning" style="display: none; grid-column: span 2; margin-top: 6px; padding: 7px 10px; border-radius: 6px; background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.35); font-size: 11px; color: #fbbf24; align-items: center; justify-content: space-between; gap: 8px;">
+              <span data-i18n="warn_meter_scale">⚠️ Model metre ölçeğinde görünüyor.</span>
+              <button class="btn btn-outline" onclick="triggerTransform('scale_1000')" data-i18n="btn_scale_1000" style="font-size: 10.5px; padding: 3px 8px; color: #fbbf24; border-color: rgba(245, 158, 11, 0.5); white-space: nowrap; font-weight: 600;">
+                📐 1000x Yap (mm)
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3D Scan Detected Shortcut Banner (Initially Hidden) -->
+        <div class="scan-shortcut-banner" id="scan-tab-shortcut-banner" style="display: none;">
+          <div class="scan-shortcut-info">
+            <span class="scan-shortcut-icon">📷</span>
+            <span data-i18n="scan_shortcut_text">3D Tarama verisi tespit edildi. Dönüştürmeden önce pürüzleri ütülemek ister misiniz?</span>
+          </div>
+          <button type="button" class="btn-goto-heal" onclick="switchToTab('heal')">
+            <span data-i18n="btn_goto_heal">🪄 İyileştir ➔</span>
+          </button>
+        </div>
+
+        <!-- Multi-Body Assembly Decomposition Card (Montaj Parçaları & Gövdeler) -->
+        <div class="card" id="card-bodies" style="display: none;">
+          <div class="card-title" style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span data-i18n="card_assemblies">🧩 Montaj Gövdeleri</span>
+              <span id="bodies-count-badge" class="badge-count">0</span>
+            </div>
+            <div style="display: flex; gap: 4px;">
+              <button class="btn-micro" onclick="selectAllBodies(true)" data-i18n="btn_all" title="Tüm Gövdeleri Seç">Tümü</button>
+              <button class="btn-micro" onclick="selectAllBodies(false)" data-i18n="btn_clear" title="Tüm Seçimleri Kaldır">Temizle</button>
+            </div>
+          </div>
+          <div class="bodies-hint" data-i18n="bodies_hint">Dönüştürmek istediğiniz parçaları seçin. 3D sahnede parçaları mouse ile tutup sürükleyerek bağımsız taşıyabilirsiniz:</div>
+          <div class="bodies-quick-actions" style="display: flex; gap: 6px; margin: 6px 0 10px 0;">
+            <button class="btn btn-outline" onclick="arrangeBodiesSideBySide()" data-i18n="btn_arrange_side" style="font-size: 11px; flex: 1; padding: 5px;" title="Tüm parçaları 3D sahnede yan yana diz">
+              ↔️ Yan Yana Diz
+            </button>
+            <button class="btn btn-outline" onclick="resetBodyPositions()" data-i18n="btn_reset_pos" style="font-size: 11px; padding: 5px 10px; color: #f87171; border-color: rgba(248,113,113,0.3);" title="Orijinal montaj konumuna geri dön">
+              🔄 Sıfırla
+            </button>
+          </div>
+          <div class="bodies-list-container" id="bodies-list-container">
+            <!-- Dynamically populated body items -->
+          </div>
+        </div>
+
+        <!-- Conversion Settings Card (AI vs Uzman Modu) -->
+        <div class="card">
+          <div class="card-title">
+            <span data-i18n="card_conv_settings">Dönüştürme Ayarları</span>
+          </div>
+
+          <!-- Compact CAD Engine Status Bar -->
+          <div class="setting-item" style="margin-bottom: 10px;">
+            <div class="engine-status-bar" id="engine-status-bar" title="RANSAC + OpenCASCADE Analitik Geometri Motoru. Düzlemsel yüzeyleri birleştirir, silindirleri tanır, helisel dişleri mikron hassasiyetle korur ve %100 su geçirmez katı model üretir.">
+              <div class="engine-status-left">
+                <div class="engine-status-icon">💎</div>
+                <div class="engine-status-text">
+                  <div class="engine-status-name" data-i18n="engine_title_native">Titan Analitik CAD Motoru (v3.0)</div>
+                  <div class="engine-status-sub" data-i18n="engine_desc_short">RANSAC + OpenCASCADE Analitik B-Rep Motoru</div>
+                </div>
+              </div>
+              <span class="engine-status-pill">100% B-Rep Katı</span>
+            </div>
+          </div>
+
+          <!-- Mode Switch: AI vs Uzman -->
+          <div class="mode-switch-container">
+            <button class="mode-switch-btn active" id="btn-mode-ai" onclick="setConversionMode('ai')">
+              <span data-i18n="tab_ai_mode">🤖 AI Otomatik Mod</span>
+            </button>
+            <button class="mode-switch-btn" id="btn-mode-expert" onclick="setConversionMode('expert')">
+              <span data-i18n="tab_expert_mode">⚙️ Uzman Modu</span>
+            </button>
+          </div>
+
+          <!-- AI Auto-Tune View -->
+          <div id="ai-mode-container" style="display: flex; flex-direction: column; gap: 10px;">
+            <!-- Model Style & Design Characteristics Selector -->
+            <div class="setting-item" style="margin-top: 2px;">
+              <div class="setting-label" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                <span data-i18n="model_style_title" style="font-weight: 700; color: #f1f5f9;">📐 Model Tarzı & Tasarım Tipi</span>
+                <button type="button" class="btn btn-outline btn-ai-detect pulsing-hint" id="btn-detect-style-ai" onclick="triggerAIDetectModelStyle()" data-i18n-title="btn_detect_title" title="Modeli yapay zeka veya yerel geometri motoruyla analiz et">
+                  <span>🤖</span>
+                  <span data-i18n="btn_detect_ai">AI ile Belirle</span>
+                </button>
+              </div>
+              <select class="select-input style-awaiting-select" id="select-model-style" onchange="onManualModelStyleChange(this.value)" style="width: 100%; box-sizing: border-box; font-weight: 500;">
+                <option value="" disabled selected data-i18n="style_placeholder">⚡ Model Tarzını Seçin veya AI ile Belirleyin...</option>
+                <option value="prismatic" data-i18n="style_prismatic">📐 Prizmatik / Mekanik Montaj Braketi & Gövde</option>
+                <option value="gear" data-i18n="style_gear">⚙️ Dişli ve Şaft / Aktarma Elemanı</option>
+                <option value="fastener" data-i18n="style_fastener">🔩 Vida, Somun ve Yivli Bağlantı Elemanı</option>
+                <option value="organic" data-i18n="style_organic">🎨 Organik Form / Sanatsal Heykel / Figür</option>
+                <option value="honeycomb" data-i18n="style_honeycomb">🕳️ Bal Peteği / İnce Kafes Yapısı</option>
+                <option value="scan" data-i18n="style_scan">📱 3D Tarama / Tersine Mühendislik</option>
+              </select>
+              <!-- Helper Choice Hint -->
+              <div class="style-choice-hint" id="style-choice-hint">
+                <span class="hint-bullet">👉</span>
+                <span id="style-choice-hint-text" data-i18n="style_hint_text">Tasarım tipini bilmiyorsanız yukarıdaki <strong>[🤖 AI ile Belirle]</strong> butonuna basarak geometriden otomatik tespit ettirebilirsiniz.</span>
+              </div>
+            </div>
+
+            <!-- Intelligent Diagnosis & Recommended Engine Parameters Card -->
+            <div class="ai-tune-badge" style="margin-top: -2px;">
+              <div style="display: flex; align-items: center; justify-content: space-between; gap: 6px;">
+                <span class="ai-tune-title" id="ai-tune-category" data-i18n="ai_tune_title">💡 Akıllı Model Teşhisi</span>
+                <div style="display: flex; align-items: center; gap: 5px;">
+                  <span id="model-style-source-badge" class="ai-chip" style="font-size: 10px;" data-source="pending" data-i18n="badge_pending">Seçim Bekleniyor</span>
+                  <span class="ai-chip" id="ai-tune-badge" style="background: rgba(0,242,254,0.12); color: var(--accent-cyan);">-</span>
+                </div>
+              </div>
+              <div class="ai-tune-desc" id="ai-tune-reason" data-i18n="ai_pending_desc">
+                Model yüklendiğinde yapay zeka veya yukarıdaki [🤖 AI ile Belirle] butonu ile geometri analiz edilir ve B-Rep motor ayarları yapılandırılır.
+              </div>
+            </div>
+
+            <!-- AI Quality Preference Selector -->
+            <div class="setting-item" style="margin-top: 2px;">
+              <div class="setting-label" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                <span data-i18n="quality_label">🎯 CAD Yüzey Kalitesi</span>
+                <span id="ai-quality-summary" style="font-size: 11px; color: var(--accent-cyan); font-weight: 600;" data-i18n="q_balanced_summary">Dengeli CAD (Önerilen)</span>
+              </div>
+              <div class="quality-selector-group">
+                <button type="button" class="quality-btn" data-quality="fast" onclick="setAIQualityPreference('fast')">
+                  <span class="q-icon">⚡</span>
+                  <span class="q-title" data-i18n="q_fast_title">Hızlı CAD</span>
+                  <span class="q-sub" data-i18n="q_fast_sub">Fasetleri korur</span>
+                </button>
+                <button type="button" class="quality-btn active" data-quality="balanced" onclick="setAIQualityPreference('balanced')">
+                  <span class="q-icon">💎</span>
+                  <span class="q-title" data-i18n="q_balanced_title">Dengeli CAD</span>
+                  <span class="q-sub" data-i18n="q_balanced_sub">Temiz yüzeyler</span>
+                </button>
+                <button type="button" class="quality-btn" data-quality="high" onclick="setAIQualityPreference('high')">
+                  <span class="q-icon">✨</span>
+                  <span class="q-title" data-i18n="q_high_title">Titan Hassas</span>
+                  <span class="q-sub" data-i18n="q_high_sub">Tam Manifold Katı</span>
+                </button>
+              </div>
+            </div>
+
+            <button class="btn btn-convert-main" id="btn-convert-ai" disabled>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+              </svg>
+              <span data-i18n="btn_convert_ai">🚀 DÖNÜŞTÜR (STEP)</span>
+            </button>
+          </div>
+
+          <!-- Uzman Modu View (Initially Hidden) -->
+          <div id="expert-mode-container" style="display: none; flex-direction: column; gap: 10px;">
+            <div class="setting-item">
+              <div class="setting-label" data-i18n="lbl_engine_mode">B-Rep Motor Modu</div>
+              <select class="select-input" id="setting-engine-mode">
+                <option value="verbatim" data-i18n="opt_mode_verbatim">Yüksek Hızlı Faset Katı (Verbatim - Önerilen)</option>
+                <option value="trueform" data-i18n="opt_mode_trueform">Analitik Katı (TrueForm - Silindir & Düzlem İyileştirme)</option>
+              </select>
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-label" data-i18n="lbl_unify">Eşdüzlemli Yüzey Birleştirme (Unify)</div>
+              <select class="select-input" id="setting-unify">
+                <option value="true" data-i18n="opt_unify_true">Açık (Düzlemleri Tek Yüzey Yapar)</option>
+                <option value="false" data-i18n="opt_unify_false">Kapalı (Her Üçgeni Ayrı B-Rep Yüzü Bırakır - Güvenli Mod)</option>
+              </select>
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-label" data-i18n="lbl_unify_angle">Yüzey Sadeleştirme & CAD Kalitesi</div>
+              <select class="select-input" id="setting-unify-angle">
+                <option value="0.5" data-i18n="opt_angle_precise">Hassas CAD (0.5° - Detaylı Faset)</option>
+                <option value="2.5" data-i18n="opt_angle_balanced" selected>Dengeli CAD (2.5° - Önerilen)</option>
+                <option value="5.0" data-i18n="opt_angle_smooth">Yüksek Sadeleştirme (5.0° - Sade Yüzeyler)</option>
+                <option value="8.0" data-i18n="opt_angle_max">Maksimum Sadeleştirme (8.0° - Minimum Yüzey)</option>
+              </select>
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-label" data-i18n="lbl_threads">CPU İş Parçacığı (Threads)</div>
+              <select class="select-input" id="setting-threads">
+                <option value="auto" data-i18n="opt_threads_auto">Maksimum (Tüm Çekirdekler)</option>
+                <option value="8" data-i18n="opt_threads_8">8 Çekirdek</option>
+                <option value="4" data-i18n="opt_threads_4">4 Çekirdek</option>
+              </select>
+            </div>
+
+            <button class="btn btn-convert-main" id="btn-convert-expert" disabled>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+              </svg>
+              <span data-i18n="btn_convert_expert">🚀 DÖNÜŞTÜR (STEP)</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Conversion Results Card (Initially Hidden) -->
+        <div class="card" id="conversion-results-card" style="display: none; border-color: rgba(16, 185, 129, 0.4);">
+          <div class="card-title" style="color: var(--accent-emerald);">
+            <span data-i18n="card_results_title">Katı Model Sonuçları</span>
+            <span style="font-size: 11px;">AP214 STEP</span>
+          </div>
+          <div class="stat-grid">
+            <div class="stat-box full-width">
+              <div class="stat-label" data-i18n="lbl_engine_used">Kullanılan Motor</div>
+              <div class="stat-value highlight" id="res-engine" style="font-size: 12px;">-</div>
+            </div>
+            <div class="stat-box full-width">
+              <div class="stat-label" data-i18n="lbl_solid_status">Katı Gövde Durumu</div>
+              <div class="stat-value success" id="res-watertight">-</div>
+            </div>
+            <div class="stat-box full-width">
+              <div class="stat-label" data-i18n="lbl_volume_verify">Hacim Doğrulaması (Mesh ➔ CAD B-Rep)</div>
+              <div class="stat-value highlight" id="res-volume" style="font-size: 11px;">-</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-label" data-i18n="lbl_brep_faces">B-Rep Yüzey Sayısı</div>
+              <div class="stat-value" id="res-faces">-</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-label" data-i18n="lbl_step_size">STEP Dosya Boyutu</div>
+              <div class="stat-value" id="res-stepsize">-</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-label" data-i18n="lbl_detected_cylinders">Algılanan Silindirler</div>
+              <div class="stat-value highlight" id="res-cylinders">-</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-label" data-i18n="lbl_detected_planes">Algılanan Düzlemler</div>
+              <div class="stat-value highlight" id="res-planes">-</div>
+            </div>
+            <div class="stat-box full-width">
+              <div class="stat-label" data-i18n="lbl_proc_time">İşlem Süresi</div>
+              <div class="stat-value" id="res-duration">-</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CAD Export & Integration Card (Initially Hidden) -->
+        <div class="card" id="cad-export-card" style="display: none;">
+          <div class="card-title" data-i18n="card_export_title">CAD Yazılımlarına Aktar</div>
+          
+          <button class="btn btn-fusion" id="btn-open-fusion">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+              <circle cx="12" cy="12" r="10"/>
+            </svg>
+            <span data-i18n="btn_open_fusion">🚀 Autodesk Fusion 360'a Gönder</span>
+          </button>
+
+          <button class="btn btn-freecad" id="btn-open-freecad">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+              <path d="M9 3v18M15 9h6M15 15h6"></path>
+            </svg>
+            <span data-i18n="btn_open_freecad">📐 FreeCAD ile Aç</span>
+          </button>
+
+          <button class="btn btn-outline" id="btn-save-step">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+              <polyline points="17 21 17 13 7 13 7 21"></polyline>
+              <polyline points="7 3 7 8 15 8"></polyline>
+            </svg>
+            <span data-i18n="btn_save_step">💾 STEP Olarak Farklı Kaydet...</span>
+          </button>
+
+          <button class="btn btn-outline" id="btn-reveal-explorer">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+            </svg>
+            <span data-i18n="btn_reveal_explorer">📂 Dosya Konumunu Aç</span>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- 3D Tarama & Mesh İyileştirme Stüdyosu (Dedicated Healing Tab) -->
+      <div class="sidebar-content" id="tab-heal" style="display: none; flex-direction: column; gap: 12px;">
+
+        <!-- 3D Tarama & Mesh İyileştirme Kartı (Scan Healing & Denoise) -->
+        <div class="card" id="card-heal" style="border: 1px solid rgba(139, 92, 246, 0.35); background: linear-gradient(180deg, rgba(139, 92, 246, 0.05) 0%, rgba(15, 23, 42, 0.4) 100%);">
+          <div class="card-title" style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span data-i18n="card_heal_title">🪄 3D Tarama & Mesh İyileştirme</span>
+            </div>
+            <span class="badge-count" style="background: rgba(139, 92, 246, 0.25); color: #c084fc; font-size: 10px; padding: 2px 6px;">KIRI / LiDAR / STL / OBJ</span>
+          </div>
+
+          <!-- Model Type Classification Badge -->
+          <div id="heal-model-type-badge" style="display: none; align-items: center; gap: 6px; padding: 5px 8px; border-radius: 6px; font-size: 11px; margin-bottom: 8px;">
+          </div>
+
+          <div data-i18n="heal_desc" style="font-size: 11.5px; color: #94a3b8; line-height: 1.45; margin-bottom: 10px;">
+            KIRI Engine veya mobil taramalardaki dalgalı yüzeyleri <strong>hacim kaybetmeden ve keskin kenarları bozmadan</strong> ütüler, havada uçuşan toz fasetleri siler, açık delikleri diker.
+          </div>
+
+          <!-- Healing Intensity Selector -->
+          <div class="setting-item" style="margin-bottom: 8px;">
+            <div class="setting-label" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+              <span data-i18n="lbl_heal_intensity">Ütüleme / İyileştirme Yoğunluğu</span>
+              <span id="heal-intensity-label" style="font-size: 10.5px; color: #c084fc; font-weight: 600;">Dengeli (Önerilen)</span>
+            </div>
+            <div class="quality-selector-group" style="grid-template-columns: repeat(3, 1fr);">
+              <button type="button" class="quality-btn" data-intensity="light" onclick="setHealIntensity('light')" style="padding: 6px 4px;">
+                <span class="q-icon">🍃</span>
+                <span class="q-title" data-i18n="heal_light" style="font-size: 11px;">Hafif</span>
+              </button>
+              <button type="button" class="quality-btn active" data-intensity="balanced" onclick="setHealIntensity('balanced')" style="padding: 6px 4px;">
+                <span class="q-icon">✨</span>
+                <span class="q-title" data-i18n="heal_balanced" style="font-size: 11px;">Dengeli</span>
+              </button>
+              <button type="button" class="quality-btn" data-intensity="strong" onclick="setHealIntensity('strong')" style="padding: 6px 4px;">
+                <span class="q-icon">⚡</span>
+                <span class="q-title" data-i18n="heal_strong" style="font-size: 11px;">Güçlü</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Feature Toggles -->
+          <div style="display: flex; flex-direction: column; gap: 7px; margin-bottom: 10px; font-size: 11.5px; color: #cbd5e1;">
+            <!-- Sharp Feature Preservation -->
+            <label style="display: flex; align-items: center; gap: 7px; cursor: pointer; color: #38bdf8; font-weight: 600;">
+              <input type="checkbox" id="chk-heal-preserve-features" checked style="accent-color: #38bdf8;" onchange="toggleFeatureAngleVisibility(this.checked)">
+              <span data-i18n="chk_preserve_features">📐 Keskin Kenarları Koru (Feature-Preserving)</span>
+            </label>
+            <div id="heal-feature-angle-row" style="display: flex; align-items: center; justify-content: space-between; margin-left: 20px; font-size: 11px; color: #94a3b8;">
+              <span data-i18n="lbl_dihedral">Köşe Eşik Açısı (Dihedral):</span>
+              <select id="sel-heal-feature-angle" style="background: rgba(15,23,42,0.8); border: 1px solid rgba(148,163,184,0.25); color: #cbd5e1; border-radius: 4px; font-size: 11px; padding: 2px 6px;">
+                <option value="30" data-i18n="opt_dihedral_30">30° (Hassas - Daha Çok Köşe Koru)</option>
+                <option value="35" data-i18n="opt_dihedral_35" selected>35° (Dengeli - CAD Standardı)</option>
+                <option value="45" data-i18n="opt_dihedral_45">45° (Sadece Çok Dik Kenarlar)</option>
+              </select>
+            </div>
+
+            <label style="display: flex; align-items: center; gap: 7px; cursor: pointer;">
+              <input type="checkbox" id="chk-heal-outliers" checked style="accent-color: #8b5cf6;">
+              <span data-i18n="chk_outliers">Uçuşan toz ve kopuk parçacıkları temizle</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 7px; cursor: pointer;">
+              <input type="checkbox" id="chk-heal-holes" checked style="accent-color: #8b5cf6;">
+              <span data-i18n="chk_holes">Açık delikleri ve kenarları kapat (Watertight)</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 7px; cursor: pointer;">
+              <input type="checkbox" id="chk-heal-smooth" checked style="accent-color: #8b5cf6;">
+              <span data-i18n="chk_smooth">Yüzey ütüleme & gürültü giderme</span>
+            </label>
+
+            <!-- Smoothing Algorithm Mode -->
+            <div style="display: flex; align-items: center; justify-content: space-between; font-size: 11px; color: #cbd5e1; margin-left: 20px;">
+              <span style="color: #94a3b8;" data-i18n="lbl_heal_method">Ütüleme Metodu:</span>
+              <div style="display: flex; gap: 10px;">
+                <label style="display: flex; align-items: center; gap: 4px; cursor: pointer; font-size: 11px;">
+                  <input type="radio" name="heal-method" value="taubin" checked style="accent-color: #8b5cf6;">
+                  <span data-i18n="method_taubin">Taubin (Hacim Koruyucu)</span>
+                </label>
+                <label style="display: flex; align-items: center; gap: 4px; cursor: pointer; font-size: 11px;">
+                  <input type="radio" name="heal-method" value="bilateral" style="accent-color: #8b5cf6;">
+                  <span data-i18n="method_bilateral">Bilateral (Yüzey Normalleri)</span>
+                </label>
+              </div>
+            </div>
+
+            <label style="display: flex; align-items: center; gap: 7px; cursor: pointer;">
+              <input type="checkbox" id="chk-heal-decimate" style="accent-color: #8b5cf6;">
+              <span data-i18n="chk_decimate">Faset sadeleştirme (Üçgen sayısını %50 azalt)</span>
+            </label>
+          </div>
+
+          <!-- Action Buttons -->
+          <div style="display: flex; gap: 6px;">
+            <button class="btn btn-primary" id="btn-heal-mesh" onclick="executeMeshHealing()" data-i18n="btn_heal_mesh" style="flex: 1; background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%); border-color: #8b5cf6; padding: 7px 12px; font-size: 12px; font-weight: 600;">
+              🪄 Modeli İyileştir & Ütüle
+            </button>
+            <button class="btn btn-outline" id="btn-revert-heal" onclick="revertMeshHealing()" data-i18n="btn_revert_heal" style="display: none; padding: 7px 10px; font-size: 11.5px; color: #f87171; border-color: rgba(248,113,113,0.35);" title="Orijinal ham modele geri dön">
+              ↩️ Geri Al
+            </button>
+          </div>
+
+          <!-- Heal Status / Result Box -->
+          <div id="heal-result-box" style="display: none; margin-top: 8px; padding: 8px 10px; border-radius: 6px; background: rgba(139, 92, 246, 0.12); border: 1px solid rgba(139, 92, 246, 0.3); font-size: 11px; color: #e2e8f0; line-height: 1.4;">
+          </div>
+        </div>
+
+        <!-- Next Step Workflow Helper Card -->
+        <div class="card" style="background: rgba(15, 23, 42, 0.4); border-color: rgba(255, 255, 255, 0.08); text-align: center;">
+          <p data-i18n="heal_next_hint" style="font-size: 11px; color: var(--text-muted); margin: 0 0 8px 0; line-height: 1.4;">
+            Modeli ütüleyip keskin hatları sabitledikten sonra katı CAD B-Rep oluşturmak için Katı CAD sekmesine geçebilirsiniz:
+          </p>
+          <button type="button" class="btn btn-outline" onclick="switchToTab('convert')" style="width: 100%; justify-content: center; font-size: 11.5px; font-weight: 600; border-color: rgba(0, 242, 254, 0.4); color: var(--accent-cyan); padding: 7px;">
+            <span data-i18n="btn_goto_convert">🚀 Katı CAD Dönüştürmeye Geç ➔</span>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Makina Tasarım Mühendisi (DfAM) Tab -->
+      <div class="sidebar-content" id="tab-dfam" style="display: none; flex-direction: column; gap: 12px;">
+
+        <!-- DfAM Score & Status Card -->
+        <div class="card dfam-score-card">
+          <div class="card-title" style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span data-i18n="card_dfam_score">📐 DfAM Üretilebilirlik Skoru</span>
+            </div>
+            <span class="dfam-score-pill" id="dfam-score-badge" data-i18n="dfam_calculating">Hesaplanıyor...</span>
+          </div>
+
+          <div class="dfam-score-hero">
+            <div class="dfam-score-gauge">
+              <div class="dfam-score-number" id="dfam-score-num">--</div>
+              <div class="dfam-score-max">/ 100</div>
+            </div>
+            <div class="dfam-score-desc">
+              <div class="dfam-model-name" id="dfam-target-name" data-i18n="txt_no_model">Model yüklenmedi</div>
+              <div class="dfam-status-tag" id="dfam-status-text" data-i18n="dfam_waiting">3D model verisi bekleniyor...</div>
+            </div>
+          </div>
+
+          <!-- 1-Click Optimal Print Orientation Button -->
+          <div class="dfam-action-section" style="margin-top: 10px;">
+            <button class="btn btn-primary" id="btn-optimize-dfam" onclick="applyOptimalDfAMOrientation()" style="width: 100%; justify-content: center; gap: 8px;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+              </svg>
+              <span data-i18n="btn_optimize_dfam">🚀 3D Baskı Yönünü Optimize Et (1-Tıkla)</span>
+            </button>
+            <div class="dfam-reason-box" id="dfam-reason-box" data-i18n="dfam_reason_default">
+              Parçayı en az destek gerektiren ve en geniş tabla yapışması sağlayan açıya otomatik oturtmak için butona tıklayın.
+            </div>
+          </div>
+        </div>
+
+        <!-- 3D Printing & Slicing Technical Metrics Card -->
+        <div class="card">
+          <div class="card-title">
+            <span data-i18n="card_3d_print_params">3D Yazıcı (Eklemeli İmalat) Parametreleri</span>
+            <span style="font-size: 10px; color: var(--accent-cyan);">ISO/ASTM 52900</span>
+          </div>
+
+          <div class="stat-grid">
+            <div class="stat-box">
+              <div class="stat-label" data-i18n="lbl_support_area">Destek Alanı (>45°)</div>
+              <div class="stat-value highlight" id="dfam-overhang-val">-%</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-label" data-i18n="lbl_critical_overhang">Kritik Sarkma (>60°)</div>
+              <div class="stat-value" id="dfam-critical-val">-%</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-label" data-i18n="lbl_bed_contact">Zemin / Tabla Teması</div>
+              <div class="stat-value success" id="dfam-bed-contact-val">- mm²</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-label" data-i18n="lbl_warping_risk">Bükülme (Warping) Riski</div>
+              <div class="stat-value" id="dfam-warping-val">-</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-label" data-i18n="lbl_thin_wall">Min. Et Kalınlığı</div>
+              <div class="stat-value" id="dfam-thin-wall-val">- mm</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-label" data-i18n="lbl_sagitta">Delik Sagitta Büzülmesi</div>
+              <div class="stat-value highlight" id="dfam-sagitta-val">+0.12 mm</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CAD B-Rep Geometric Verification Card -->
+        <div class="card" id="dfam-cad-card">
+          <div class="card-title" style="display: flex; justify-content: space-between; align-items: center;">
+            <span data-i18n="card_cad_verify">Teknik Çizim & Katı Doğrulama</span>
+            <span id="dfam-cad-badge" style="font-size: 10px; color: var(--accent-cyan);">B-Rep Katı</span>
+          </div>
+
+          <div class="stat-grid">
+            <div class="stat-box">
+              <div class="stat-label" data-i18n="lbl_brep_faces">B-Rep Yüzey Sayısı</div>
+              <div class="stat-value highlight" id="dfam-brep-faces-val">-</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-label" data-i18n="lbl_facet_reduction">Faset Sadeleşme Oranı</div>
+              <div class="stat-value success" id="dfam-reduction-val">-%</div>
+            </div>
+            <div class="stat-box full-width">
+              <div class="stat-label" data-i18n="lbl_vol_dev">Hacim Sapması (Mesh vs Katı STEP)</div>
+              <div class="stat-value highlight" id="dfam-vol-dev-val">Dönüştürme bekleniyor</div>
+            </div>
+            <div class="stat-box full-width">
+              <div class="stat-label" data-i18n="lbl_solid_integrity">Katı Bütünlüğü & Manifoldluk</div>
+              <div class="stat-value success" id="dfam-solid-status-val">-</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Engineering Recommendations & PM Action Items -->
+        <div class="card">
+          <div class="card-title">
+            <span data-i18n="card_engineering_recs">👷 Mühendislik Tavsiyeleri & PM Notları</span>
+          </div>
+          <div class="dfam-recommendations-container" id="dfam-recommendations-list">
+            <div class="dfam-rec-item" data-i18n="dfam_rec_default">Model yüklendiğinde Makina Tasarım Mühendisi analiz maddeleri burada listelenecektir.</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- AI Assistant Tab -->
+      <div class="sidebar-content" id="tab-ai" style="display: none;">
+        <div class="card">
+          <div class="card-title" data-i18n="card_ai_title">🤖 Gemini AI Tersine Mühendislik</div>
+          <p data-i18n="ai_desc" style="font-size: 11.5px; color: var(--text-muted); line-height: 1.5;">
+            Yapay zeka parça geometrisini inceler; silindirik yuvaları, düz montaj yüzeylerini, imalat yöntemlerini (3D Baskı vs CNC) ve mukavemet tavsiyelerini listeler.
+          </p>
+          <button class="btn btn-primary" id="btn-run-ai">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M12 16v-4M12 8h.01"></path>
+            </svg>
+            <span data-i18n="btn_run_ai">Modeli AI ile İncele</span>
+          </button>
+        </div>
+
+        <div class="ai-box" id="ai-output-box" data-i18n="ai_output_default">
+          AI analizi almak için yukarıdaki butona tıklayın...
+        </div>
+      </div>
+    </aside>
+
+  </main>
+
+  <!-- Settings Modal (Sistem & API Ayarları) -->
+  <div class="modal-overlay" id="settings-modal" style="display: none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div style="font-size: 15px; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 8px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent-cyan)" stroke-width="2">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+          <span data-i18n="modal_settings_title">Sistem ve API Ayarları</span>
+        </div>
+        <button class="modal-close-btn" onclick="closeSettingsModal()">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="setting-item">
+          <div class="setting-label" data-i18n="lbl_hardware_accel">Donanım Hızlandırma & GPU</div>
+          <div class="stat-box" style="margin-top: 4px;">
+            <div class="stat-label" data-i18n="lbl_detected_gpu">Algılanan Grafik Kartı</div>
+            <div class="stat-value highlight" id="settings-gpu-val">NVIDIA GeForce MX550 (CUDA 13.3)</div>
+          </div>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-label" data-i18n="lbl_cpu_threads">CPU İş Parçacığı Sayısı (Threads)</div>
+          <select class="select-input" id="settings-threads-select">
+            <option value="20" data-i18n="opt_threads_20">Maksimum Performans (20 Thread)</option>
+            <option value="16" data-i18n="opt_threads_16">16 Thread</option>
+            <option value="8" data-i18n="opt_threads_8_perf">8 Thread</option>
+            <option value="4" data-i18n="opt_threads_4_low">4 Thread (Düşük Kaynak)</option>
+          </select>
+          <span style="font-size: 11px; color: var(--text-dim);" data-i18n="lbl_threads_help">OpenCASCADE B-Rep dikiş ve faset motoruna ayrılan çekirdek sayısı.</span>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-label" data-i18n="lbl_gemini_key">Google Gemini API Anahtarı</div>
+          <input type="password" class="select-input" id="settings-api-key" placeholder="AIzaSy... veya AQ.Ab..." data-i18n-placeholder="ph_gemini_key" style="cursor: text;">
+          <span style="font-size: 11px; color: var(--text-dim);" data-i18n="gemini_key_sub">Tersine mühendislik ve akıllı analiz için API anahtarınız.</span>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-label" data-i18n="lbl_ai_model">AI Modeli (Google Gemini)</div>
+          <select class="select-input" id="settings-model-select">
+            <option value="gemini-3.8-flash">Gemini 3.8 Flash (🔥 En Yeni, En Hızlı & En Güçlü)</option>
+            <option value="gemini-3.7-flash">Gemini 3.7 Flash (Yüksek Akıl Yürütme)</option>
+            <option value="gemini-3.6-flash">Gemini 3.6 Flash</option>
+            <option value="gemini-3.5-flash">Gemini 3.5 Flash</option>
+            <option value="gemini-3.5-flash-lite">Gemini 3.5 Flash Lite (⚡ 500 İstek/Gün Yüksek Kota)</option>
+            <option value="gemini-3.1-flash-lite">Gemini 3.1 Flash Lite (⚡ 500 İstek/Gün Yüksek Kota)</option>
+            <option value="gemini-3-flash">Gemini 3 Flash</option>
+            <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
+            <option value="gemini-2.5-flash-lite">Gemini 2.5 Flash Lite</option>
+          </select>
+          <span style="font-size: 11px; color: var(--text-dim);">Google AI Studio hesabınızdaki kotalara göre dilediğiniz modeli seçebilirsiniz.</span>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeSettingsModal()" data-i18n="btn_cancel">Vazgeç</button>
+        <button class="btn btn-primary" onclick="saveSettingsFromModal()" data-i18n="btn_save_settings">💾 Ayarları Kaydet</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Persistent Conversion History & Benchmark Ledger Modal -->
+  <div class="modal-overlay" id="history-modal" style="display: none;">
+    <div class="modal-card history-modal-card">
+      <div class="modal-header">
+        <div style="font-size: 15px; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 8px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent-cyan)" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+          <span data-i18n="modal_history_title">Dönüştürme Geçmişi ve Katı Model Arşivi</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <button class="btn btn-outline" id="btn-clear-history" data-i18n="btn_clear_history" style="font-size: 11px; padding: 4px 10px; color: var(--accent-red); border-color: rgba(239, 68, 68, 0.3);">
+            🗑️ Geçmişi Temizle
+          </button>
+          <button class="modal-close-btn" onclick="closeHistoryModal()">✕</button>
+        </div>
+      </div>
+
+      <!-- History Stats Summary Bar -->
+      <div class="history-summary-bar">
+        <div class="history-pill">
+          <span class="pill-label" data-i18n="lbl_total_models">Toplam Model:</span>
+          <span class="pill-val highlight" id="hist-total-count">0</span>
+        </div>
+        <div class="history-pill">
+          <span class="pill-label" data-i18n="lbl_success_solids">Başarılı Katı:</span>
+          <span class="pill-val success" id="hist-success-count">0</span>
+        </div>
+        <div class="history-pill">
+          <span class="pill-label" data-i18n="lbl_avg_reduction">Ort. B-Rep Sadeleştirme:</span>
+          <span class="pill-val highlight" id="hist-avg-reduction">-%0</span>
+        </div>
+        <div class="history-search-wrap">
+          <input type="text" id="history-search-input" class="history-search-input" placeholder="🔍 Model adı, format veya motor ara..." data-i18n-placeholder="ph_history_search" oninput="filterHistoryList()">
+        </div>
+      </div>
+
+      <!-- History List -->
+      <div class="modal-body history-modal-body" id="history-list-container">
+        <!-- Rendered dynamically by viewer.js -->
+      </div>
+
+      <div class="modal-footer" style="justify-content: space-between; align-items: center;">
+        <span style="font-size: 11px; color: var(--text-dim);" data-i18n="history_footer_note">💾 Veriler yerel diskte (conversion_history.json) kalıcı olarak saklanır. Uygulama kapansa bile kaybolmaz.</span>
+        <button class="btn btn-primary" onclick="closeHistoryModal()" data-i18n="btn_close">Kapat</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- About & Developer Modal -->
+  <div class="modal-overlay" id="about-modal" style="display: none;">
+    <div class="modal-card about-modal-card">
+      <div class="modal-header">
+        <div class="about-modal-header-title">
+          <span class="about-header-icon">ℹ️</span>
+          <span data-i18n="modal_about_title">Mesh2Step 3D Studio Hakkında</span>
+          <span class="about-modal-version-tag" id="about-modal-version-tag">v3.21</span>
+        </div>
+        <button class="modal-close-btn" onclick="closeAboutModal()">✕</button>
+      </div>
+
+      <div class="modal-body about-modal-body">
+        <!-- Hero App Banner -->
+        <div class="about-hero-banner">
+          <div class="about-hero-logo-box">
+            <svg viewBox="0 0 24 24" class="about-hero-svg">
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="url(#hero-gradient)" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              <defs>
+                <linearGradient id="hero-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#00f2fe"/>
+                  <stop offset="100%" stop-color="#4facfe"/>
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+          <div class="about-hero-info">
+            <div class="about-hero-title">Mesh2Step 3D Studio</div>
+            <div class="about-hero-badge" data-i18n="about_hero_tag">100% Manifold Analitik B-Rep STEP Katı CAD Çekirdeği</div>
+            <div class="about-hero-desc" data-i18n="about_hero_desc">
+              Mesh modellerini (.stl, .3mf, .obj, .ply) doğrudan parametrik CAD uyumlu katı STEP (ISO 10303-21) modellerine dönüştüren yeni nesil tersine mühendislik stüdyosu.
+            </div>
+          </div>
+        </div>
+
+        <!-- Developer Credit Card -->
+        <div class="about-section-card dev-credit-card">
+          <div class="about-card-badge dev-badge">
+            <span data-i18n="about_dev_role">Yazılım & Algoritma Geliştiricisi</span>
+          </div>
+          <div class="dev-card-content">
+            <div class="dev-avatar">
+              <span class="dev-avatar-icon">👨‍💻</span>
+            </div>
+            <div class="dev-info">
+              <div class="dev-name" id="about-dev-name">Okan YEŞİLYURT</div>
+              <a href="javascript:void(0)" class="dev-website-link" onclick="openExternalUrl('https://www.okanyesilyurt.com')" title="Okan YEŞİLYURT Web Sitesi">
+                <span class="globe-icon">🌐</span>
+                <span>www.okanyesilyurt.com</span>
+                <span class="external-arrow">↗</span>
+              </a>
+              <div class="dev-bio" data-i18n="about_dev_desc">
+                Mesh işleme, tersine mühendislik, B-Rep katı yüzey dikimi ve yapay zeka optimizasyon algoritmaları mimarı.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Official GitHub Repository Card -->
+        <div class="about-section-card github-repo-card">
+          <div class="about-card-badge repo-badge">
+            <span data-i18n="about_repo_badge">Açık Kaynak Kod & Resmi Depo</span>
+          </div>
+          <div class="repo-card-content">
+            <div class="repo-card-header">
+              <div class="repo-icon-wrap">
+                <svg viewBox="0 0 24 24" class="github-svg-icon" fill="currentColor">
+                  <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+                </svg>
+              </div>
+              <div class="repo-text-wrap">
+                <div class="repo-title" data-i18n="about_repo_title">Resmi GitHub Deposu</div>
+                <div class="repo-url-tag">github.com/okanyyurt/Mesh2Step</div>
+              </div>
+            </div>
+            <div class="repo-desc" data-i18n="about_repo_desc">
+              Mesh2Step projesinin kaynak kodları, kurulum paketleri, teknik mimari belgeleri ve güncel yayınları (releases) GitHub üzerinde barındırılmaktadır.
+            </div>
+            <div class="repo-actions">
+              <button class="btn btn-github-action" onclick="openExternalUrl('https://github.com/okanyyurt/Mesh2Step')">
+                <span class="btn-icon">🌐</span>
+                <span data-i18n="about_repo_btn">GitHub Deposunu Aç</span>
+              </button>
+              <button class="btn btn-copy-action" onclick="copyRepoUrl()">
+                <span class="btn-icon">📋</span>
+                <span data-i18n="btn_copy_link">Bağlantıyı Kopyala</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Changelog & Release Notes Card -->
+        <div class="about-section-card changelog-card">
+          <div class="about-card-badge changelog-badge">
+            <span data-i18n="about_changelog_badge">Sürüm Günlüğü & Değişiklikler</span>
+          </div>
+          <div class="changelog-card-content">
+            <div class="changelog-header-row">
+              <span class="changelog-icon">📝</span>
+              <div class="changelog-title-wrap">
+                <div class="changelog-title" data-i18n="about_changelog_title">Sürüm Notları (CHANGELOG)</div>
+                <div class="changelog-sub">Mesh2Step / CHANGELOG.md</div>
+              </div>
+            </div>
+            <div class="changelog-desc" data-i18n="about_changelog_desc">
+              Tüm hata düzeltmeleri, algoritma geliştirmeleri ve yeni özellikler projenin GitHub deposundaki CHANGELOG.md dosyasında düzenli olarak güncellenmektedir.
+            </div>
+            <div class="changelog-actions">
+              <button class="btn btn-changelog-action" onclick="openExternalUrl('https://github.com/okanyyurt/Mesh2Step/blob/main/CHANGELOG.md')">
+                <span class="btn-icon">📜</span>
+                <span data-i18n="about_changelog_btn">Sürüm Günlüğünü Oku (CHANGELOG.md)</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- System & License Specs Summary -->
+        <div class="about-specs-grid">
+          <div class="spec-pill">
+            <span class="spec-lbl" data-i18n="about_spec_version">Yüklü Sürüm:</span>
+            <span class="spec-val highlight-cyan" id="about-spec-version-val">v3.21</span>
+          </div>
+          <div class="spec-pill">
+            <span class="spec-lbl" data-i18n="about_spec_date">Yayın Tarihi:</span>
+            <span class="spec-val" id="about-spec-date-val">28.09.2026</span>
+          </div>
+          <div class="spec-pill">
+            <span class="spec-lbl" data-i18n="about_spec_engine">CAD Çekirdeği:</span>
+            <span class="spec-val">Titan CAD (B-Rep)</span>
+          </div>
+          <div class="spec-pill">
+            <span class="spec-lbl" data-i18n="about_spec_license">Lisans:</span>
+            <span class="spec-val">Geliştirici Lisansı</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer about-modal-footer">
+        <span class="about-copyright" data-i18n="about_copyright_note">© 2026 Okan YEŞİLYURT. Tüm hakları saklıdır.</span>
+        <button class="btn btn-primary" onclick="closeAboutModal()" data-i18n="btn_close" style="padding: 6px 20px;">Kapat</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Unsaved Model Confirmation Modal -->
+  <div class="modal-overlay" id="unsaved-modal" style="display: none;">
+    <div class="modal-card" style="max-width: 480px;">
+      <div class="modal-header">
+        <div style="font-size: 15px; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 18px;">⚠️</span>
+          <span data-i18n="modal_unsaved_title">Önceki Katı Model (STEP) Kaydedilsin mi?</span>
+        </div>
+        <button class="modal-close-btn" onclick="closeUnsavedModal()">✕</button>
+      </div>
+      <div class="modal-body" style="gap: 12px;">
+        <p style="font-size: 12.5px; color: var(--text-muted); line-height: 1.6;" data-i18n="unsaved_warning">
+          Daha önce dönüştürdüğünüz katı CAD modeli (STEP) henüz kaydedilmedi. Yeni bir model yüklediğinizde bu model 3D sahneden temizlenecektir.
+        </p>
+        <div class="stat-box" style="margin-top: 4px;">
+          <div class="stat-label" data-i18n="lbl_completed_solid">Tamamlanan Katı Model</div>
+          <div class="stat-value highlight" id="unsaved-filename" style="font-size: 12px; word-break: break-all;">-</div>
+        </div>
+      </div>
+      <div class="modal-footer" style="display: flex; gap: 8px; justify-content: flex-end;">
+        <button class="btn btn-outline" onclick="proceedWithoutSaving()" data-i18n="btn_discard" style="font-size: 12px; color: var(--accent-red); border-color: rgba(239, 68, 68, 0.3);">
+          🗑️ Kaydetmeden Sil & Yeni Modeli Aç
+        </button>
+        <button class="btn btn-primary" onclick="saveAndProceed()" data-i18n="btn_save_and_open" style="font-size: 12px;">
+          💾 STEP'i Kaydet & Devam Et
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Main Viewer Controller -->
+  <script src="viewer.js"></script>
+</body>
+</html>

@@ -1,0 +1,69 @@
+{
+  "api_settings": {
+    "gemini_api_key": "",
+    "selected_model": "gemini-3.8-flash",
+    "available_models": [
+      "gemini-3.8-flash",
+      "gemini-3.7-flash",
+      "gemini-3.6-flash",
+      "gemini-3.5-flash",
+      "gemini-3.5-flash-lite",
+      "gemini-3.1-flash-lite",
+      "gemini-3-flash",
+      "gemini-2.5-flash",
+      "gemini-2.5-flash-lite"
+    ],
+    "temperature": 0.2,
+    "max_tokens": 2048
+  },
+  "presets": {
+    "prismatic": {
+      "name": "Prizmatik Mekanik Gövde & Montaj Braketi",
+      "description": "Düz montaj tablaları, flanşlar ve cıvata delikleri için optimize edilmiştir.",
+      "crease_angle_deg": 25.0,
+      "method": "TrueForm",
+      "unify_coplanar": true
+    },
+    "gear_transmission": {
+      "name": "Dişli ve Şaft / Aktarma Elemanı",
+      "description": "Eksenel simetri, silindirik delikler ve diş profilleri için optimize edilmiştir.",
+      "crease_angle_deg": 18.0,
+      "method": "TrueForm",
+      "unify_coplanar": true
+    },
+    "fastener_thread": {
+      "name": "Vida, Somun ve Helisel Bağlantı",
+      "description": "Helisel vida yivleri ve diş geometrileri için optimize edilmiştir.",
+      "crease_angle_deg": 20.0,
+      "method": "TrueForm",
+      "unify_coplanar": true
+    },
+    "organic_figure": {
+      "name": "Organik Form / Heykel / Figür",
+      "description": "Keskin kenarları az, serbest formlu estetik yüzeyler için faset korumalı katı dönüşümü.",
+      "crease_angle_deg": 45.0,
+      "method": "Verbatim",
+      "unify_coplanar": true
+    },
+    "honeycomb_lattice": {
+      "name": "Bal Peteği / İnce Kafes Yapısı",
+      "description": "İnce hücreli duvarlar ve gözenekli kafes yapıları için mikron hassasiyetli katı dönüşümü.",
+      "crease_angle_deg": 35.0,
+      "method": "Verbatim",
+      "unify_coplanar": true
+    },
+    "scan_reverse_engineering": {
+      "name": "3D Tarama / Tersine Mühendislik",
+      "description": "Optik/LiDAR mobil taramalar için bilateral normal filtrelemeli katı dönüşümü.",
+      "crease_angle_deg": 35.0,
+      "method": "Verbatim",
+      "unify_coplanar": true
+    }
+  },
+  "default_preset": "prismatic",
+  "mesh_limits": {
+    "warn_triangle_count": 100000,
+    "auto_decimate_above": 300000
+  },
+  "threads": 8
+}

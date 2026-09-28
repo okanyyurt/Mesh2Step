@@ -1,0 +1,61 @@
+# =========================================================================
+# Git Ignore Rules for Mesh2Step 3D Studio
+# =========================================================================
+
+# Secrets and User Specific Configurations
+config.json
+*.env
+*.key
+*.pem
+*.token
+
+# Large CAD & 3D Test Files (>100MB blocks GitHub pushes)
+APP/örnek/
+örnek/
+*.step
+*.stp
+*.iges
+*.igs
+*.3mf
+*.stl
+*.obj
+*.ply
+*.glb
+*.gltf
+*.off
+!config.example.json
+
+# Build & Packaging Artifacts
+dist/
+build/
+dist_repo/
+*.spec
+*.exe
+
+# Python Cache & Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv/
+.pytest_cache/
+
+# Agent, Scratch & Knowledge Graph Internals
+scratch/
+graphify-out/
+.agents/
+.antigravity/
+.system_generated/
+*.log
+*.tmp
+
+# Operating System & IDE
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
