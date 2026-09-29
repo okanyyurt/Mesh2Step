@@ -14,6 +14,7 @@ let hasSavedCurrentStep = false;
 let pendingLoadAction = null;
 let currentAutoTune = null;
 let currentHistoryData = [];
+let currentMeshStats = null;
 
 // Initialize Three.js WebGL Scene
 function initViewer() {
@@ -1807,6 +1808,7 @@ window.cycleRotate90 = cycleRotate90;
 // UI Data Synchronization
 function updateUIWithMeshData(data) {
   if (!data) return;
+  currentMeshStats = data;
   if (data.filename) document.getElementById('stat-filename').textContent = data.filename;
   if (data.format) document.getElementById('stat-format').textContent = data.format;
   if (data.file_size_mb !== undefined && data.file_size_mb !== null) {
@@ -1959,6 +1961,26 @@ function updateUIWithConversionResult(res) {
   }
 
   document.getElementById('res-faces').textContent = res.faces_count.toLocaleString() + ' B-Rep Yüzey';
+
+  // Calculate & display simplification rate (% reduction from mesh facets to CAD B-Rep faces)
+  const origTri = res.orig_triangles || (currentMeshStats && (currentMeshStats.triangle_count || currentMeshStats.triangles)) || 0;
+  const brepFaces = res.faces_count || 0;
+  let redPct = res.reduction_pct;
+  if ((redPct === undefined || redPct === null) && origTri > 0 && brepFaces > 0 && brepFaces < origTri) {
+    redPct = Math.round((1.0 - (brepFaces / origTri)) * 1000) / 10;
+  }
+
+  const elReduction = document.getElementById('res-reduction');
+  if (elReduction) {
+    if (redPct !== undefined && redPct !== null && redPct > 0) {
+      elReduction.textContent = `-%${redPct}`;
+      elReduction.className = 'stat-value success';
+    } else {
+      elReduction.textContent = '%0';
+      elReduction.className = 'stat-value';
+    }
+  }
+
   const cylVal = String(res.cylinders_recovered ?? '0');
   document.getElementById('res-cylinders').textContent = cylVal.includes('adet') ? cylVal : (cylVal + ' adet');
   const planeVal = String(res.planes_recovered ?? '0');
@@ -1971,7 +1993,13 @@ function updateUIWithConversionResult(res) {
   if (dfamFaces) dfamFaces.textContent = `${res.faces_count.toLocaleString()} Yüzey`;
 
   const dfamRed = document.getElementById('dfam-reduction-val');
-  if (dfamRed && res.reduction_pct) dfamRed.textContent = `-%${res.reduction_pct}`;
+  if (dfamRed) {
+    if (redPct !== undefined && redPct !== null && redPct > 0) {
+      dfamRed.textContent = `-%${redPct}`;
+    } else {
+      dfamRed.textContent = '%0';
+    }
+  }
 
   const dfamDev = document.getElementById('dfam-vol-dev-val');
   if (dfamDev) {

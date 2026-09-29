@@ -14,6 +14,14 @@ Format, [Keep a Changelog](https://keepachangelog.com/tr/1.0.0/) standartlarına
 
 ---
 
+## [3.22] - 2026-09-29 18:06
+
+### 🔧 Değişiklikler ve Düzeltmeler
+- Katı model dönüştürme sonuç tablosuna % cinsinden B-Rep yüzey sadeleştirme oranı eklendi
+
+---
+
+
 ## [3.21] - 2026-09-28 11:21
 
 ### 🔧 Değişiklikler ve Düzeltmeler

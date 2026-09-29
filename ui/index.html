@@ -27,7 +27,7 @@
           <div class="brand-title" data-i18n="app_brand">MESH2STEP 3D STUDIO</div>
           <div class="header-version-wrapper" id="header-version-wrapper" title="Mesh2Step 3D Studio">
             <span class="version-pulse-dot"></span>
-            <span class="header-version-pill" id="header-version-tag" onclick="openAboutModal()" style="cursor: pointer;" title="Mesh2Step 3D Studio">v3.21</span>
+            <span class="header-version-pill" id="header-version-tag" onclick="openAboutModal()" style="cursor: pointer;" title="Mesh2Step 3D Studio">v3.22</span>
             <button class="header-about-pill-btn" id="btn-header-about" onclick="openAboutModal()" data-i18n-title="about_modal_btn_tip" title="Hakkında, Geliştirici &amp; GitHub Deposu">
               <span class="about-icon">ℹ️</span>
               <span class="about-label" data-i18n="btn_about">Hakkında</span>
@@ -36,13 +36,13 @@
             <div class="version-hover-card" id="version-hover-card">
               <div class="version-hover-header">
                 <span class="version-hover-app">MESH2STEP 3D STUDIO</span>
-                <span class="version-hover-tag" id="hover-tag-version">v3.21</span>
+                <span class="version-hover-tag" id="hover-tag-version">v3.22</span>
               </div>
               <div class="version-hover-body">
                 <div class="version-hover-row">
                   <span class="version-hover-icon">📅</span>
                   <span class="version-hover-lbl" data-i18n="hover_release">Yayınlanma:</span>
-                  <span class="version-hover-val" id="hover-datetime-val">28.09.2026 11:21</span>
+                  <span class="version-hover-val" id="hover-datetime-val">29.09.2026 18:06</span>
                 </div>
                 <div class="version-hover-row">
                   <span class="version-hover-icon">⚡</span>
@@ -536,8 +536,8 @@
               <div class="stat-value" id="res-faces">-</div>
             </div>
             <div class="stat-box">
-              <div class="stat-label" data-i18n="lbl_step_size">STEP Dosya Boyutu</div>
-              <div class="stat-value" id="res-stepsize">-</div>
+              <div class="stat-label" data-i18n="lbl_simplification_rate">B-Rep Sadeleştirme Oranı</div>
+              <div class="stat-value success" id="res-reduction">-%0</div>
             </div>
             <div class="stat-box">
               <div class="stat-label" data-i18n="lbl_detected_cylinders">Algılanan Silindirler</div>
@@ -547,7 +547,11 @@
               <div class="stat-label" data-i18n="lbl_detected_planes">Algılanan Düzlemler</div>
               <div class="stat-value highlight" id="res-planes">-</div>
             </div>
-            <div class="stat-box full-width">
+            <div class="stat-box">
+              <div class="stat-label" data-i18n="lbl_step_size">STEP Dosya Boyutu</div>
+              <div class="stat-value" id="res-stepsize">-</div>
+            </div>
+            <div class="stat-box">
               <div class="stat-label" data-i18n="lbl_proc_time">İşlem Süresi</div>
               <div class="stat-value" id="res-duration">-</div>
             </div>
@@ -967,7 +971,7 @@
         <div class="about-modal-header-title">
           <span class="about-header-icon">ℹ️</span>
           <span data-i18n="modal_about_title">Mesh2Step 3D Studio Hakkında</span>
-          <span class="about-modal-version-tag" id="about-modal-version-tag">v3.21</span>
+          <span class="about-modal-version-tag" id="about-modal-version-tag">v3.22</span>
         </div>
         <button class="modal-close-btn" onclick="closeAboutModal()">✕</button>
       </div>
@@ -1080,11 +1084,11 @@
         <div class="about-specs-grid">
           <div class="spec-pill">
             <span class="spec-lbl" data-i18n="about_spec_version">Yüklü Sürüm:</span>
-            <span class="spec-val highlight-cyan" id="about-spec-version-val">v3.21</span>
+            <span class="spec-val highlight-cyan" id="about-spec-version-val">v3.22</span>
           </div>
           <div class="spec-pill">
             <span class="spec-lbl" data-i18n="about_spec_date">Yayın Tarihi:</span>
-            <span class="spec-val" id="about-spec-date-val">28.09.2026</span>
+            <span class="spec-val" id="about-spec-date-val">29.09.2026</span>
           </div>
           <div class="spec-pill">
             <span class="spec-lbl" data-i18n="about_spec_engine">CAD Çekirdeği:</span>

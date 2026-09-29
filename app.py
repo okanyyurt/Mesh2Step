@@ -1878,6 +1878,8 @@ YALNIZCA şu JSON formatında yanıt ver:
                 "error": res.get("error", "")
             }
             record_conversion_entry(entry)
+            res["reduction_pct"] = reduction
+            res["orig_triangles"] = orig_tri
             return sanitize_for_json(res)
         except Exception as e:
             entry_filename = os.path.basename(self._original_filepath or filepath or target)
