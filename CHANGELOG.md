@@ -14,6 +14,14 @@ Format, [Keep a Changelog](https://keepachangelog.com/tr/1.0.0/) standartlarına
 
 ---
 
+## [3.24] - 2026-11-08 23:53
+
+### 🔧 Değişiklikler ve Düzeltmeler
+- Web portalina projenin gercek 3D CAD modelleri (Otomotiv Braketi, Robotik Planet Govde, Sikloidal Kam Diski, Montaj Askisi) entegre edildi ve gercekci PBR / B-Rep gorsellestirmesi eklendi
+
+---
+
+
 ## [3.23] - 2026-11-08 23:15
 
 ### 🔧 Değişiklikler ve Düzeltmeler

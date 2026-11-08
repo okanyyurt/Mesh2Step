@@ -164,8 +164,48 @@
             </div>
           </div>
 
+          <!-- Real Project Model Selector Bar -->
+          <div class="viewport-model-bar">
+            <div class="model-picker-wrap">
+              <span class="picker-icon">🏎️</span>
+              <select id="model-select" class="cad-model-select" title="Projeden Gerçek 3D Parça Seç">
+                <option value="headlamp_bracket" selected>Far Yıkama Braketi (HeadlampWasherBracket.stl)</option>
+                <option value="housing">Robotik Planet Redüktör Gövdesi (housing.STL)</option>
+                <option value="cycloidal_wall">Sikloidal Redüktör Kam Diski (CycloidalWall.3mf)</option>
+                <option value="towel_hook">Radyatör Montaj Askısı (TowelHook.stl)</option>
+              </select>
+            </div>
+            <div class="viewport-quick-tools">
+              <button class="tool-icon-btn" id="btn-toggle-rotate" title="Otomatik Dönüşü Durdur / Başlat">⏸</button>
+              <button class="tool-icon-btn" id="btn-reset-cam" title="Kamera Açısını Sıfırla">⟲</button>
+            </div>
+          </div>
+
           <!-- WebGL Canvas Container -->
           <div id="canvas-container">
+            <!-- Telemetry HUD Chips -->
+            <div class="viewport-telemetry-hud">
+              <div class="hud-stat-chip">
+                <span class="chip-label" data-i18n="hud_mesh_src">Kaynak Model:</span>
+                <span class="chip-val font-mono" id="hud-model-filename">HeadlampWasherBracket.stl</span>
+              </div>
+              <div class="hud-stat-chip">
+                <span class="chip-label" data-i18n="hud_mesh_facets">Faset:</span>
+                <span class="chip-val font-mono" id="hud-val-faces">5,774</span>
+              </div>
+              <div class="hud-stat-chip highlight">
+                <span class="chip-label" data-i18n="hud_brep_opt">B-Rep Kazancı:</span>
+                <span class="chip-val font-mono" id="hud-val-reduction">-89.4%</span>
+              </div>
+            </div>
+
+            <!-- DfAM Overhang Legend -->
+            <div class="dfam-legend-hud" id="dfam-legend-box" style="display: none;">
+              <div class="dfam-legend-item"><span class="dfam-color-dot red"></span><span>>60° Kritik Askı (Destek Gerekir)</span></div>
+              <div class="dfam-legend-item"><span class="dfam-color-dot amber"></span><span>45°-60° Uyarı Bölgesi</span></div>
+              <div class="dfam-legend-item"><span class="dfam-color-dot cyan"></span><span>&lt;45° Güvenli Katman</span></div>
+            </div>
+
             <div class="canvas-loading-overlay" id="canvas-loading">
               <div class="spinner"></div>
               <span style="font-size: 0.8125rem; font-family: var(--font-mono); color: var(--cyan-primary);">3D CAD Motoru Yükleniyor...</span>
@@ -756,7 +796,11 @@
     }
   </script>
 
+  <!-- Real Project CAD Models Database -->
+  <script src="assets/models/real_models.js"></script>
+
   <!-- Main Application Script -->
   <script src="app.js"></script>
 </body>
 </html>
+

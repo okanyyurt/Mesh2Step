@@ -1,8 +1,8 @@
 /**
  * Mesh2Step 3D Studio - Official Web Portal Application Logic
  * Domain: mesh2step.gryntech.net
- * Features: Three.js Interactive CAD Viewport, Bilingual Localization (TR/EN),
- *           Pipeline Simulation, Code Copying & Smooth Navigation.
+ * Features: Three.js Interactive CAD Viewport with REAL Project Samples,
+ *           Bilingual Localization (TR/EN), Pipeline Simulation, Code Copying & Smooth Navigation.
  * Author: Okan YEŞİLYURT
  */
 
@@ -40,6 +40,10 @@ const i18nData = {
     hud_dfam: "DfAM Askı Analizi",
     vp_footer_mode: "Mod:",
     vp_footer_rotate: "3D Modeli Döndürmek İçin Sürükleyin",
+    hud_mesh_src: "Kaynak Model:",
+    hud_mesh_facets: "Faset:",
+    hud_brep_opt: "B-Rep Kazancı:",
+    lbl_sample_model: "Örnek Model:",
     
     // Problem vs Solution
     tag_problem_solution: "Neden Mesh2Step?",
@@ -176,6 +180,10 @@ const i18nData = {
     hud_dfam: "DfAM Overhang Audit",
     vp_footer_mode: "Mode:",
     vp_footer_rotate: "Drag Mouse to Rotate 3D Model",
+    hud_mesh_src: "Source Model:",
+    hud_mesh_facets: "Facets:",
+    hud_brep_opt: "B-Rep Gain:",
+    lbl_sample_model: "Sample Model:",
     
     // Problem vs Solution
     tag_problem_solution: "Why Mesh2Step?",
@@ -335,8 +343,8 @@ const pipelineSteps = [
       "Path Safety: Windows 8.3 short-path and Unicode safety"
     ],
     logs: [
-      { tag: "IMPORT", msg: "Mesh ingestion started: flange_bracket_v2.3mf", status: "normal" },
-      { tag: "INDEX", msg: "Parsed 48,290 vertices, 96,576 triangle facets", status: "normal" },
+      { tag: "IMPORT", msg: "Mesh ingestion started: HeadlampWasherBracket.stl", status: "normal" },
+      { tag: "INDEX", msg: "Parsed 538 vertices, 5,774 triangle facets", status: "normal" },
       { tag: "CHECK", msg: "Geometry status: Watertight (Manifold: TRUE)", status: "success" }
     ]
   },
@@ -358,8 +366,8 @@ const pipelineSteps = [
     ],
     logs: [
       { tag: "HEALING", msg: "Applying Taubin volume-preserving filter (iter=12)", status: "normal" },
-      { tag: "LOCKING", msg: "Identified 4,812 sharp mechanical edges (>30.0°)", status: "success" },
-      { tag: "PASS", msg: "Zero volumetric loss detected. RMS error: 0.0004 mm", status: "success" }
+      { tag: "LOCKING", msg: "Identified 482 sharp mechanical edges (>28.0°)", status: "success" },
+      { tag: "PASS", msg: "Zero volumetric loss detected. RMS error: 0.0002 mm", status: "success" }
     ]
   },
   {
@@ -379,8 +387,8 @@ const pipelineSteps = [
       "OpenCASCADE OCP: Micron-precision sewing with BRepBuilderAPI"
     ],
     logs: [
-      { tag: "COPLANAR", msg: "Merging planar face clusters (angular tol=0.01 rad)", status: "normal" },
-      { tag: "TRUEFORM", msg: "Found 6 cylindrical bolt bores, 14 planar datum faces", status: "success" },
+      { tag: "COPLANAR", msg: "Merging planar face clusters (angular tol=0.015 rad)", status: "normal" },
+      { tag: "TRUEFORM", msg: "Detected 4 mounting slots, 2 stiffener ribs", status: "success" },
       { tag: "SEWING", msg: "OpenCASCADE B-Rep sew completed: 1 Solid, 0 Free edges", status: "success" }
     ]
   },
@@ -401,7 +409,7 @@ const pipelineSteps = [
       "Ledger Log: Conversion stats archived to conversion_history.json"
     ],
     logs: [
-      { tag: "EXPORT", msg: "Writing output solid -> flange_bracket_v2.step", status: "normal" },
+      { tag: "EXPORT", msg: "Writing output solid -> HeadlampWasherBracket.step", status: "normal" },
       { tag: "INTEGRATE", msg: "Dispatching to Autodesk Fusion 360 API bridge", status: "success" },
       { tag: "COMPLETE", msg: "Solid ready for parametric editing & CNC toolpaths!", status: "success" }
     ]
@@ -454,10 +462,17 @@ function selectPipelineStep(index) {
 // 3. Three.js Interactive 3D CAD Mechanical Model Viewport
 // -------------------------------------------------------------
 let scene, camera, renderer, controls;
-let currentCADMesh = null;
-let currentEdges = null;
+let currentCADGroup = null;
 let currentMode = 'cad'; // 'mesh' | 'cad' | 'dfam'
+let currentModelId = 'headlamp_bracket';
 let animationId = null;
+
+const modelIcons = {
+  headlamp_bracket: "🏎️",
+  housing: "⚙️",
+  cycloidal_wall: "🔄",
+  towel_hook: "🪝"
+};
 
 function initThreeCADViewer() {
   const container = document.getElementById('canvas-container');
@@ -472,62 +487,103 @@ function initThreeCADViewer() {
   
   // Scene setup
   scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x080d1a);
+  scene.background = new THREE.Color(0x070c18);
   
   // Camera
-  camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
-  camera.position.set(45, 35, 55);
+  camera = new THREE.PerspectiveCamera(42, width / height, 0.1, 1000);
+  camera.position.set(38, 28, 48);
   
-  // Renderer
-  renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+  // High-End Renderer with tone mapping
+  renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: "high-performance" });
   renderer.setSize(width, height);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.1;
+  renderer.toneMappingExposure = 1.15;
   container.appendChild(renderer.domElement);
   
-  // Orbit Controls (if OrbitControls loaded)
+  // Orbit Controls
   if (typeof THREE.OrbitControls !== 'undefined') {
     controls = new THREE.OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
     controls.autoRotate = true;
-    controls.autoRotateSpeed = 1.2;
-    controls.minDistance = 20;
-    controls.maxDistance = 150;
+    controls.autoRotateSpeed = 1.4;
+    controls.minDistance = 15;
+    controls.maxDistance = 180;
+    controls.target.set(0, 0, 0);
   }
   
-  // Lighting setup for high-end CAD rendering
-  const ambientLight = new THREE.AmbientLight(0xffffff, 0.65);
-  scene.add(ambientLight);
+  // Studio Quality Multi-Point CAD Lighting
+  const hemiLight = new THREE.HemisphereLight(0x38bdf8, 0x090d16, 0.75);
+  scene.add(hemiLight);
   
-  const keyLight = new THREE.DirectionalLight(0x00f2fe, 1.4);
-  keyLight.position.set(40, 60, 40);
+  // Main Key Light (Soft Cyan White)
+  const keyLight = new THREE.DirectionalLight(0xffffff, 1.4);
+  keyLight.position.set(45, 60, 40);
+  keyLight.castShadow = true;
   scene.add(keyLight);
   
-  const fillLight = new THREE.DirectionalLight(0x38bdf8, 0.8);
-  fillLight.position.set(-40, 30, -30);
+  // Fill Light (Electric Blue)
+  const fillLight = new THREE.DirectionalLight(0x38bdf8, 0.9);
+  fillLight.position.set(-45, 25, -30);
   scene.add(fillLight);
   
-  const rimLight = new THREE.DirectionalLight(0x818cf8, 0.9);
-  rimLight.position.set(0, -40, -50);
+  // Sharp Cyan Edge Rim Light
+  const rimLight = new THREE.DirectionalLight(0x00f2fe, 1.5);
+  rimLight.position.set(20, -35, -50);
   scene.add(rimLight);
   
-  // CAD Grid Plane
-  const gridHelper = new THREE.GridHelper(80, 24, 0x00f2fe, 0x1e293b);
-  gridHelper.position.y = -14;
+  // Bottom Warm Bounce Light
+  const bounceLight = new THREE.DirectionalLight(0x1e3a8a, 0.6);
+  bounceLight.position.set(0, -50, 0);
+  scene.add(bounceLight);
+  
+  // Precision CAD Grid Floor
+  const gridHelper = new THREE.GridHelper(70, 28, 0x00f2fe, 0x1e293b);
+  gridHelper.position.y = -18;
   scene.add(gridHelper);
   
-  // Build Parametric Mechanical Model
-  createMechanicalModel();
+  // Render Real Project Model
+  renderRealProjectModel();
   
-  // Hide loading spinner
+  // Hide loading overlay
   const overlay = document.getElementById('canvas-loading');
   if (overlay) {
     overlay.style.opacity = '0';
     setTimeout(() => { overlay.style.display = 'none'; }, 400);
+  }
+  
+  // Quick tools listeners
+  const rotateBtn = document.getElementById('btn-toggle-rotate');
+  if (rotateBtn && controls) {
+    rotateBtn.addEventListener('click', () => {
+      controls.autoRotate = !controls.autoRotate;
+      rotateBtn.textContent = controls.autoRotate ? '⏸' : '▶';
+      rotateBtn.style.color = controls.autoRotate ? '' : '#00f2fe';
+    });
+  }
+  
+  const resetBtn = document.getElementById('btn-reset-cam');
+  if (resetBtn && controls) {
+    resetBtn.addEventListener('click', () => {
+      camera.position.set(38, 28, 48);
+      controls.target.set(0, 0, 0);
+      controls.update();
+    });
+  }
+  
+  const modelSelect = document.getElementById('model-select');
+  if (modelSelect) {
+    modelSelect.addEventListener('change', (e) => {
+      currentModelId = e.target.value;
+      const pickerIcon = document.querySelector('.picker-icon');
+      if (pickerIcon && modelIcons[currentModelId]) {
+        pickerIcon.textContent = modelIcons[currentModelId];
+      }
+      renderRealProjectModel();
+    });
   }
   
   // Resize handler
@@ -537,130 +593,140 @@ function initThreeCADViewer() {
   animate();
 }
 
-function createMechanicalModel() {
-  if (currentCADMesh) scene.remove(currentCADMesh);
-  if (currentEdges) scene.remove(currentEdges);
+function renderRealProjectModel() {
+  if (currentCADGroup) {
+    scene.remove(currentCADGroup);
+    currentCADGroup = null;
+  }
   
-  // Construct an industrial mechanical bracket / flange with central bore and radial bolt teeth
   const group = new THREE.Group();
+  let geometry = null;
   
-  // Outer cylindrical flange body with central hole
-  const shape = new THREE.Shape();
-  const outerR = 18;
-  const innerR = 7;
+  // Look up model data from real_models.js
+  const mData = (window.REAL_MODELS_DATA && window.REAL_MODELS_DATA[currentModelId]) || null;
   
-  // Outer circle with 6 bolt tab lobes
-  const segments = 60;
-  for (let i = 0; i <= segments; i++) {
-    const theta = (i / segments) * Math.PI * 2;
-    const lobe = Math.sin(theta * 6) * 2.2;
-    const r = outerR + lobe;
-    const x = Math.cos(theta) * r;
-    const y = Math.sin(theta) * r;
-    if (i === 0) shape.moveTo(x, y);
-    else shape.lineTo(x, y);
+  if (mData && mData.vertices && mData.faces) {
+    const positions = new Float32Array(mData.vertices);
+    const indices = new Uint32Array(mData.faces);
+    
+    geometry = new THREE.BufferGeometry();
+    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    geometry.setIndex(new THREE.BufferAttribute(indices, 1));
+    geometry.computeVertexNormals();
+    geometry.computeBoundingBox();
+    
+    // Update Telemetry HUD
+    const nameEl = document.getElementById('hud-model-filename');
+    const facesEl = document.getElementById('hud-val-faces');
+    const redEl = document.getElementById('hud-val-reduction');
+    
+    if (nameEl) nameEl.textContent = mData.source_file;
+    if (facesEl) facesEl.textContent = mData.face_count.toLocaleString();
+    if (redEl) redEl.textContent = mData.step_reduction;
+  } else {
+    // Fallback parametric geometry if database isn't loaded
+    geometry = new THREE.CylinderGeometry(14, 18, 12, 32);
+    geometry.computeVertexNormals();
   }
   
-  // Inner hollow hole
-  const holePath = new THREE.Path();
-  for (let i = 0; i <= segments; i++) {
-    const theta = (i / segments) * Math.PI * 2;
-    const x = Math.cos(theta) * innerR;
-    const y = Math.sin(theta) * innerR;
-    if (i === 0) holePath.moveTo(x, y);
-    else holePath.lineTo(x, y);
-  }
-  shape.holes.push(holePath);
+  // Mode-Specific Materials and CAD Shaders
+  let meshMaterial;
+  const dfamLegendBox = document.getElementById('dfam-legend-box');
   
-  // Extrude configuration
-  const extrudeSettings = {
-    steps: 1,
-    depth: 14,
-    bevelEnabled: true,
-    bevelThickness: 1.5,
-    bevelSize: 1.2,
-    bevelSegments: 4
-  };
-  
-  const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
-  geometry.center();
-  
-  // Materials based on Mode
-  let material;
   if (currentMode === 'mesh') {
-    // Triangular faceted wireframe look
-    material = new THREE.MeshStandardMaterial({
-      color: 0x1e293b,
-      roughness: 0.8,
-      metalness: 0.2,
-      flatShading: true,
-      wireframe: false
+    if (dfamLegendBox) dfamLegendBox.style.display = 'none';
+    
+    // Flat Shaded Faceted Matte Carbon Surface
+    meshMaterial = new THREE.MeshStandardMaterial({
+      color: 0x182436,
+      roughness: 0.85,
+      metalness: 0.15,
+      flatShading: true
     });
     
-    // Wireframe edge overlay
+    // Triangular Facet Wireframe Overlay
     const wireGeo = new THREE.WireframeGeometry(geometry);
-    const wireMat = new THREE.LineBasicMaterial({ color: 0x38bdf8, linewidth: 1 });
-    currentEdges = new THREE.LineSegments(wireGeo, wireMat);
-    group.add(currentEdges);
+    const wireMat = new THREE.LineBasicMaterial({
+      color: 0x38bdf8,
+      linewidth: 1,
+      transparent: true,
+      opacity: 0.42
+    });
+    const wireMesh = new THREE.LineSegments(wireGeo, wireMat);
+    group.add(wireMesh);
     
   } else if (currentMode === 'cad') {
-    // Smooth parametric CAD metallic B-Rep look with cyan boundary contours
-    material = new THREE.MeshStandardMaterial({
-      color: 0x102a43,
-      roughness: 0.25,
-      metalness: 0.85,
+    if (dfamLegendBox) dfamLegendBox.style.display = 'none';
+    
+    // High-End Titanium Anodized B-Rep Solid Surface
+    meshMaterial = new THREE.MeshPhysicalMaterial({
+      color: 0x12253a,
+      roughness: 0.22,
+      metalness: 0.88,
+      clearcoat: 0.75,
+      clearcoatRoughness: 0.12,
+      reflectivity: 0.95,
       flatShading: false
     });
     
-    // Sharp B-Rep boundary curves (> 30° dihedral angle)
-    const edgeGeo = new THREE.EdgesGeometry(geometry, 28);
-    const edgeMat = new THREE.LineBasicMaterial({ color: 0x00f2fe, linewidth: 2 });
-    currentEdges = new THREE.LineSegments(edgeGeo, edgeMat);
-    group.add(currentEdges);
+    // Dihedral Feature Angle Boundary Edge Curves (24 deg threshold)
+    const edgeGeo = new THREE.EdgesGeometry(geometry, 24);
+    const edgeMat = new THREE.LineBasicMaterial({
+      color: 0x00f2fe,
+      linewidth: 2,
+      transparent: true,
+      opacity: 0.95
+    });
+    const edgeMesh = new THREE.LineSegments(edgeGeo, edgeMat);
+    group.add(edgeMesh);
     
   } else if (currentMode === 'dfam') {
-    // DfAM Overhang Heatmap look (faces facing downwards colored red/amber)
-    const count = geometry.attributes.position.count;
+    if (dfamLegendBox) dfamLegendBox.style.display = 'flex';
+    
+    // Precise Overhang Heatmap based on Face Normal Inclination
     geometry.computeVertexNormals();
     const normals = geometry.attributes.normal;
     const colors = [];
     
-    for (let i = 0; i < count; i++) {
+    for (let i = 0; i < normals.count; i++) {
       const ny = normals.getY(i);
-      if (ny < -0.7) {
-        // Severe overhang (>60°) -> Critical Red
-        colors.push(0.95, 0.2, 0.25);
+      if (ny < -0.707) {
+        // Critical Overhang (> 60°) -> Crimson Red
+        colors.push(0.94, 0.23, 0.28);
       } else if (ny < -0.2) {
-        // Warning overhang (45°-60°) -> Amber
-        colors.push(0.96, 0.62, 0.1);
+        // Warning Zone (45° - 60°) -> Amber Orange
+        colors.push(0.96, 0.62, 0.11);
       } else {
-        // Safe printable -> Emerald Cyan
-        colors.push(0.06, 0.72, 0.6);
+        // Safe Printable Zone (< 45°) -> Emerald Cyan
+        colors.push(0.06, 0.72, 0.58);
       }
     }
-    geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
     
-    material = new THREE.MeshStandardMaterial({
+    geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+    meshMaterial = new THREE.MeshStandardMaterial({
       vertexColors: true,
-      roughness: 0.4,
-      metalness: 0.4
+      roughness: 0.35,
+      metalness: 0.4,
+      flatShading: true
     });
     
     const edgeGeo = new THREE.EdgesGeometry(geometry, 35);
-    const edgeMat = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.3 });
-    currentEdges = new THREE.LineSegments(edgeGeo, edgeMat);
-    group.add(currentEdges);
+    const edgeMat = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.25 });
+    const edgeMesh = new THREE.LineSegments(edgeGeo, edgeMat);
+    group.add(edgeMesh);
   }
   
-  currentCADMesh = new THREE.Mesh(geometry, material);
-  group.add(currentCADMesh);
+  const mainMesh = new THREE.Mesh(geometry, meshMaterial);
+  mainMesh.castShadow = true;
+  mainMesh.receiveShadow = true;
+  group.add(mainMesh);
   
-  // Rotate slightly for dramatic presentation
-  group.rotation.x = -Math.PI / 4;
-  group.rotation.y = Math.PI / 6;
+  // Initial dramatic isometric pitch
+  group.rotation.x = -Math.PI / 6;
+  group.rotation.y = Math.PI / 4;
   
   scene.add(group);
-  currentCADMesh = group;
+  currentCADGroup = group;
 }
 
 function setViewerMode(mode) {
@@ -679,7 +745,7 @@ function setViewerMode(mode) {
     else if (mode === 'dfam') modeText.textContent = currentLang === 'tr' ? 'DfAM Askı Isı Haritası (Overhang)' : 'DfAM Overhang Heatmap';
   }
   
-  createMechanicalModel();
+  renderRealProjectModel();
 }
 
 function onWindowResize() {
@@ -737,7 +803,6 @@ function initMobileMenu() {
       menu.classList.toggle('open');
       btn.textContent = menu.classList.contains('open') ? '✕' : '☰';
     });
-    // Close menu when clicking link
     menu.querySelectorAll('a').forEach(a => {
       a.addEventListener('click', () => {
         menu.classList.remove('open');
@@ -764,27 +829,19 @@ function initBackToTop() {
 // 5. DOM Ready Bootstrap
 // -------------------------------------------------------------
 document.addEventListener('DOMContentLoaded', () => {
-  // Check stored language preference
   const savedLang = localStorage.getItem('mesh2step_lang') || 'tr';
   setLanguage(savedLang);
   
-  // Init 3D CAD Viewport
   initThreeCADViewer();
-  
-  // Init pipeline default to Step 1
   selectPipelineStep(0);
-  
-  // Init helpers
   initFAQAccordion();
   initMobileMenu();
   initBackToTop();
   
-  // Pipeline tab click listeners
   document.querySelectorAll('.step-tab').forEach((tab, index) => {
     tab.addEventListener('click', () => selectPipelineStep(index));
   });
   
-  // Viewport mode switcher listeners
   document.querySelectorAll('.hud-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
       const mode = e.target.getAttribute('data-mode');
@@ -792,7 +849,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
   
-  // Language toggle listener
   const langToggleBtn = document.getElementById('lang-toggle-btn');
   if (langToggleBtn) {
     langToggleBtn.addEventListener('click', toggleLanguage);

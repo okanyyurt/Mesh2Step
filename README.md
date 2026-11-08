@@ -2,7 +2,7 @@
 
 <div align="center">
 
-[![Version](https://img.shields.io/badge/Version-v3.23%20(Stable)-00f2fe.svg?style=for-the-badge)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/Version-v3.24%20(Stable)-00f2fe.svg?style=for-the-badge)](CHANGELOG.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.9%20%7C%203.10%20%7C%203.11-brightgreen.svg?style=for-the-badge)](https://www.python.org/)
 [![WebGL](https://img.shields.io/badge/WebGL-Three.js-000000.svg?style=for-the-badge)](https://threejs.org/)
