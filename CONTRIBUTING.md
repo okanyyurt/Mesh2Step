@@ -34,8 +34,8 @@ Yeni bir CAD dönüştürme algoritması, mesh iyileştirme filtresi veya arayü
 5. Dalınızı GitHub'a push edin ve bir Pull Request açın.
 
 ### 👨‍💻 İletişim & Proje Yöneticisi
-- **Proje Sahibi & Geliştirici:** Okan YEŞİLYURT
-- **Web Sitesi:** [www.okanyesilyurt.com](https://www.okanyesilyurt.com)
+- **Proje Web Sitesi:** [mesh2step.gryntech.net](https://mesh2step.gryntech.net)
+- **Proje Sahibi & Geliştirici:** Okan YEŞİLYURT ([www.okanyesilyurt.com](https://www.okanyesilyurt.com))
 - **GitHub:** [@okanyyurt](https://github.com/okanyyurt)
 
 ---
@@ -68,6 +68,6 @@ Have an idea for a new CAD healing filter, B-Rep segmentation heuristic, or UI c
 5. Push to your branch and open a Pull Request against `main`.
 
 ### 👨‍💻 Project Maintainer
-- **Author & Lead Developer:** Okan YEŞİLYURT
-- **Website:** [www.okanyesilyurt.com](https://www.okanyesilyurt.com)
+- **Project Website:** [mesh2step.gryntech.net](https://mesh2step.gryntech.net)
+- **Author & Lead Developer:** Okan YEŞİLYURT ([www.okanyesilyurt.com](https://www.okanyesilyurt.com))
 - **GitHub:** [@okanyyurt](https://github.com/okanyyurt)

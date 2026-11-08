@@ -18,8 +18,8 @@
 
 ### 🛡️ Güvenlik Açığı Bildirimi
 Eğer projede potansiyel bir güvenlik açığı tespit ederseniz, lütfen bunu herkese açık GitHub Issues üzerinden paylaşmak yerine doğrudan e-posta yoluyla geliştiriciye iletin:
-- **Geliştirici:** Okan YEŞİLYURT
-- **Web Sitesi:** [www.okanyesilyurt.com](https://www.okanyesilyurt.com)
+- **Proje Web Sitesi:** [mesh2step.gryntech.net](https://mesh2step.gryntech.net)
+- **Geliştirici:** Okan YEŞİLYURT ([www.okanyesilyurt.com](https://www.okanyesilyurt.com))
 - **GitHub:** [@okanyyurt](https://github.com/okanyyurt)
 
 ---
@@ -38,6 +38,6 @@ Eğer projede potansiyel bir güvenlik açığı tespit ederseniz, lütfen bunu 
 
 ### 🛡️ Reporting Vulnerabilities
 If you identify a security or privacy vulnerability, please contact the maintainer directly:
-- **Author & Developer:** Okan YEŞİLYURT
-- **Website:** [www.okanyesilyurt.com](https://www.okanyesilyurt.com)
+- **Project Website:** [mesh2step.gryntech.net](https://mesh2step.gryntech.net)
+- **Author & Developer:** Okan YEŞİLYURT ([www.okanyesilyurt.com](https://www.okanyesilyurt.com))
 - **GitHub:** [@okanyyurt](https://github.com/okanyyurt)
