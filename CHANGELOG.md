@@ -14,6 +14,14 @@ Format, [Keep a Changelog](https://keepachangelog.com/tr/1.0.0/) standartlarına
 
 ---
 
+## [3.23] - 2026-11-08 23:15
+
+### 🔧 Değişiklikler ve Düzeltmeler
+- Resmi web sitesi portali (mesh2step.gryntech.net) yayinlandi, public_html olusturuldu, repo web adresi guncellendi ve tum eski dizin baglamlari yeni proje yoluna aktarildi
+
+---
+
+
 ## [3.22] - 2026-09-29 18:06
 
 ### 🔧 Değişiklikler ve Düzeltmeler

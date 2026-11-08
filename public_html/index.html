@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mesh2Step 3D Studio • Mesh (STL/3MF/OBJ) → Katı CAD B-Rep STEP Çevirici</title>
+  <meta name="description" content="Yüksek Hassasiyetli Mesh (STL, 3MF, OBJ, PLY) → Katı CAD B-Rep STEP Çevirici, Akıllı Yüzey İyileştirme ve DfAM Mühendislik Stüdyosu. %100 Yerel, Güvenli ve Açık Kaynak.">
+  <meta name="keywords" content="Mesh to STEP, STL to STEP, 3MF to STEP, CAD B-Rep, OpenCASCADE, Autodesk Fusion 360, FreeCAD, SolidWorks, DfAM, 3D Mesh Healing, Reverse Engineering">
+  <meta name="author" content="Okan YEŞİLYURT">
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://mesh2step.gryntech.net/">
+  <meta property="og:title" content="Mesh2Step 3D Studio • Mesh → Katı CAD B-Rep STEP Çevirici">
+  <meta property="og:description" content="STL, 3MF ve OBJ mesh dosyalarınızı parametrik, su sızdırmaz CAD B-Rep STEP katı modellere dönüştürün. Sıfır bulut bağımlılığı, tam veri gizliliği.">
+  <meta property="og:image" content="https://mesh2step.gryntech.net/favicon.svg">
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://mesh2step.gryntech.net/">
+  <meta property="twitter:title" content="Mesh2Step 3D Studio • Mesh → Katı CAD B-Rep STEP Çevirici">
+  <meta property="twitter:description" content="STL, 3MF ve OBJ mesh dosyalarınızı parametrik, su sızdırmaz CAD B-Rep STEP katı modellere dönüştürün. Sıfır bulut bağımlılığı, tam veri gizliliği.">
+  <meta property="twitter:image" content="https://mesh2step.gryntech.net/favicon.svg">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Sticky Header -->
+  <header class="site-header">
+    <div class="container nav-container">
+      <a href="#" class="brand-link">
+        <div class="brand-logo-icon">
+          <svg viewBox="0 0 36 36" width="36" height="36" fill="none">
+            <polygon points="18,3 33,12 27,33 9,33 3,12" stroke="#00f2fe" stroke-width="2" fill="rgba(0, 242, 254, 0.1)"/>
+            <polygon points="18,3 33,12 24,15 18,9" fill="rgba(56, 189, 248, 0.4)" stroke="#38bdf8" stroke-width="1"/>
+            <polygon points="18,3 3,12 12,15 18,9" fill="rgba(56, 189, 248, 0.4)" stroke="#38bdf8" stroke-width="1"/>
+            <polygon points="12,15 24,15 18,33" fill="#00f2fe" opacity="0.8"/>
+            <circle cx="18" cy="3" r="2" fill="#fff"/>
+            <circle cx="18" cy="33" r="2" fill="#00f2fe"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">Mesh2Step <span class="gradient-text">Studio</span></span>
+          <span class="brand-subtitle">CAD B-Rep & DfAM Engine</span>
+        </div>
+      </a>
+
+      <!-- Desktop Navigation Links -->
+      <ul class="nav-menu" id="nav-menu-list">
+        <li><a href="#problem" data-i18n="nav_problem">Çözüm & Fark</a></li>
+        <li><a href="#features" data-i18n="nav_features">Yetenekler</a></li>
+        <li><a href="#pipeline" data-i18n="nav_pipeline">İşlem Hattı</a></li>
+        <li><a href="#architecture" data-i18n="nav_arch">Mimari</a></li>
+        <li><a href="#comparison" data-i18n="nav_compare">Karşılaştırma</a></li>
+        <li><a href="#faq" data-i18n="nav_faq">SSS</a></li>
+      </ul>
+
+      <!-- Action Buttons -->
+      <div class="nav-actions">
+        <!-- Language Switcher -->
+        <button class="lang-switch-btn" id="lang-toggle-btn" title="Dili Değiştir / Switch Language">
+          <span id="lang-switch-text">🇬🇧 EN</span>
+        </button>
+
+        <!-- GitHub Repo Button -->
+        <a href="https://github.com/okanyyurt/Mesh2Step" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm" title="GitHub Deposu">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+          </svg>
+          <span data-i18n="btn_github">GitHub</span>
+        </a>
+
+        <!-- Download CTA -->
+        <a href="#download" class="btn btn-cyan btn-sm">
+          <span>⬇</span>
+          <span data-i18n="nav_download">İndir</span>
+        </a>
+
+        <!-- Mobile Toggle -->
+        <button class="mobile-menu-btn" id="mobile-menu-toggle" aria-label="Menüyü Aç">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="container hero-grid">
+      <!-- Left Content -->
+      <div class="hero-content">
+        <div class="hero-badge-wrap">
+          <div class="hero-badge">
+            <span class="status-dot"></span>
+            <span data-i18n="hero_badge">v3.23 (Kararlı Sürüm)</span>
+          </div>
+          <div class="hero-sub-badge" data-i18n="hero_sub_badge">ISO 10303-21 STEP B-Rep • 100% Yerel</div>
+        </div>
+
+        <h1 class="hero-title">
+          <span data-i18n="hero_title">Mesh Dosyalarınızı Gerçek Parametrik B-Rep STEP Katı Modele Dönüştürün</span>
+        </h1>
+
+        <p class="hero-desc" data-i18n="hero_desc">
+          STL, 3MF ve OBJ dosyalarındaki milyonlarca dağınık üçgen faseti; Autodesk Fusion 360, SolidWorks ve FreeCAD ile %100 uyumlu, keskin kenarları kilitli, su sızdırmaz ve mikron toleranslı analitik katı gövdelere (STEP B-Rep) dönüştürün. Sıfır bulut bağımlılığı, tam veri gizliliği.
+        </p>
+
+        <div class="hero-cta-group">
+          <a href="#download" class="btn btn-cyan btn-lg">
+            <span>🚀</span>
+            <span data-i18n="hero_cta_download">Masaüstü Sürümü İndir</span>
+          </a>
+          <a href="https://github.com/okanyyurt/Mesh2Step" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-lg">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+              <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+            </svg>
+            <span data-i18n="hero_cta_github">GitHub'da İncele</span>
+          </a>
+        </div>
+
+        <!-- Key Metrics Row -->
+        <div class="hero-stats-row">
+          <div class="stat-item">
+            <span class="stat-value gradient-text">-%88</span>
+            <span class="stat-label" data-i18n="stat_reduction">B-Rep Sadeleştirme</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value gradient-text">0.001 mm</span>
+            <span class="stat-label" data-i18n="stat_accuracy">Mikron Toleransı</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value gradient-text-alt">%100</span>
+            <span class="stat-label" data-i18n="stat_privacy">Çevrimdışı & Yerel</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right 3D Viewport Hero Card -->
+      <div class="hero-visual">
+        <div class="cad-viewport-card">
+          <!-- Viewport Header HUD -->
+          <div class="viewport-header">
+            <div class="viewport-dots">
+              <span class="v-dot red"></span>
+              <span class="v-dot yellow"></span>
+              <span class="v-dot green"></span>
+            </div>
+            <div class="viewport-title">
+              <span>💎</span>
+              <span data-i18n="viewport_title">İnteraktif 3D CAD Önizleme</span>
+            </div>
+            <div class="viewport-controls-hud">
+              <button class="hud-btn" data-mode="mesh" data-i18n="hud_mesh">Fasetli Mesh (STL)</button>
+              <button class="hud-btn active" data-mode="cad" data-i18n="hud_cad">Analitik CAD (STEP)</button>
+              <button class="hud-btn" data-mode="dfam" data-i18n="hud_dfam">DfAM Askı Analizi</button>
+            </div>
+          </div>
+
+          <!-- WebGL Canvas Container -->
+          <div id="canvas-container">
+            <div class="canvas-loading-overlay" id="canvas-loading">
+              <div class="spinner"></div>
+              <span style="font-size: 0.8125rem; font-family: var(--font-mono); color: var(--cyan-primary);">3D CAD Motoru Yükleniyor...</span>
+            </div>
+          </div>
+
+          <!-- Viewport Footer HUD -->
+          <div class="viewport-footer">
+            <div>
+              <span data-i18n="vp_footer_mode">Mod:</span> 
+              <span id="vp-current-mode" class="hud-pill">Analitik B-Rep STEP (Solid)</span>
+            </div>
+            <div data-i18n="vp_footer_rotate">3D Modeli Döndürmek İçin Sürükleyin</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Problem vs Solution Section -->
+  <section class="problem-solution-section" id="problem">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag" data-i18n="tag_problem_solution">Neden Mesh2Step?</span>
+        <h2 class="section-title" data-i18n="title_problem_solution">Mesh Açmazını B-Rep Matematiği ile Çözüyoruz</h2>
+        <p class="section-desc" data-i18n="desc_problem_solution">
+          Geleneksel mesh dosyaları parametrik CAD mühendisliği için tasarlanmamıştır. Mesh2Step, yapay zeka ve C++ geometrik çekirdek ile aradaki uçurumu kapatır.
+        </p>
+      </div>
+
+      <div class="comparison-cards-grid">
+        <!-- Problem Card -->
+        <div class="comp-card problem">
+          <span class="comp-badge problem" data-i18n="comp_prob_badge">Geleneksel Mesh Problemi</span>
+          <h3 class="comp-card-title" data-i18n="comp_prob_title">CAD Kilitlenmeleri ve Boşa Giden Saatler</h3>
+          <p class="comp-card-desc" data-i18n="comp_prob_desc">
+            Standart STL/OBJ dosyaları CAD yazılımlarına aktarıldığında yüz binlerce ölü üçgenden oluşur.
+          </p>
+          <ul class="comp-list">
+            <li class="comp-list-item">
+              <span class="comp-list-icon cross-icon">✕</span>
+              <span data-i18n="prob_item_1">Ölçüm alınamaz, teknik resim veya parametrik feder eklenemez.</span>
+            </li>
+            <li class="comp-list-item">
+              <span class="comp-list-icon cross-icon">✕</span>
+              <span data-i18n="prob_item_2">Silindirik bir cıvata deliği yüzlerce faset yüzeye bölünür ve montaj imkansızlaşır.</span>
+            </li>
+            <li class="comp-list-item">
+              <span class="comp-list-icon cross-icon">✕</span>
+              <span data-i18n="prob_item_3">Bulut tabanlı çeviriciler gizli AR-GE parçalarınızı harici sunuculara yüklemeye zorlar.</span>
+            </li>
+            <li class="comp-list-item">
+              <span class="comp-list-icon cross-icon">✕</span>
+              <span data-i18n="prob_item_4">Geleneksel pürüzsüzleştiriciler keskin kenarları yuvarlatarak parçayı hurdaya çevirir.</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Solution Card -->
+        <div class="comp-card solution">
+          <span class="comp-badge solution" data-i18n="comp_sol_badge">Mesh2Step 3D Studio Çözümü</span>
+          <h3 class="comp-card-title" data-i18n="comp_sol_title">100% Yerel, Keskin Kenar Korumalı Katı B-Rep</h3>
+          <p class="comp-card-desc" data-i18n="comp_sol_desc">
+            Titan CAD ve OpenCASCADE B-Rep dikiş motoru ile sıfır veri kaybıyla mikron hassasiyetinde katı üretim.
+          </p>
+          <ul class="comp-list">
+            <li class="comp-list-item">
+              <span class="comp-list-icon check-icon">✓</span>
+              <span data-i18n="sol_item_1">Eşdüzlemli yüzeyleri birleştirerek CAD dosya boyutunu %90'a kadar küçültür.</span>
+            </li>
+            <li class="comp-list-item">
+              <span class="comp-list-icon check-icon">✓</span>
+              <span data-i18n="sol_item_2">25°-45° dihedral açı kilitlemesiyle kritik montaj kenarlarını bozmadan pürüzleri ütüler.</span>
+            </li>
+            <li class="comp-list-item">
+              <span class="comp-list-icon check-icon">✓</span>
+              <span data-i18n="sol_item_3">%100 Yerel çalışır; modelleriniz asla bilgisayarınızın dışına çıkmaz.</span>
+            </li>
+            <li class="comp-list-item">
+              <span class="comp-list-icon check-icon">✓</span>
+              <span data-i18n="sol_item_4">Tek tıkla Autodesk Fusion 360 veya FreeCAD içerisine doğrudan aktarır.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Core Features Section -->
+  <section class="features-section" id="features">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag" data-i18n="tag_features">Güçlü Özellikler</span>
+        <h2 class="section-title" data-i18n="title_features">Uçtan Uca Tersine Mühendislik Stüdyosu</h2>
+        <p class="section-desc" data-i18n="desc_features">
+          Yalnızca bir dönüştürücü değil; profesyonel katmanlı imalat, yüzey iyileştirme ve montaj denetim paketi.
+        </p>
+      </div>
+
+      <div class="features-grid">
+        <!-- Feature 1 -->
+        <div class="feature-card">
+          <div class="feature-icon-wrap">🚀</div>
+          <h3 class="feature-title" data-i18n="feat_1_title">Doğrudan B-Rep STEP Katı Üretimi</h3>
+          <p class="feature-desc" data-i18n="feat_1_desc">
+            OpenCASCADE (OCP) motoru ile manifold, su sızdırmaz ISO 10303-21 STEP AP214 katı gövde örer.
+          </p>
+          <div class="feature-tag-list">
+            <span class="feature-tag">OpenCASCADE</span>
+            <span class="feature-tag">ISO 10303-21</span>
+            <span class="feature-tag">Watertight</span>
+          </div>
+        </div>
+
+        <!-- Feature 2 -->
+        <div class="feature-card">
+          <div class="feature-icon-wrap">🪄</div>
+          <h3 class="feature-title" data-i18n="feat_2_title">Akıllı Mesh İyileştirme (Healing)</h3>
+          <p class="feature-desc" data-i18n="feat_2_desc">
+            Taubin hacim koruyucu filtre ve bilateral yüzey normalleri ile 3D tarama pürüzlerini keskin kenarları koruyarak siler.
+          </p>
+          <div class="feature-tag-list">
+            <span class="feature-tag">Taubin Filter</span>
+            <span class="feature-tag">Dihedral Lock</span>
+            <span class="feature-tag">Bilateral Normals</span>
+          </div>
+        </div>
+
+        <!-- Feature 3 -->
+        <div class="feature-card">
+          <div class="feature-icon-wrap">🤖</div>
+          <h3 class="feature-title" data-i18n="feat_3_title">Çift Modlu Yapay Zeka Topolojisi</h3>
+          <p class="feature-desc" data-i18n="feat_3_desc">
+            %100 çevrimdışı yerel geometrik boyut analizi veya isteğe bağlı Google Gemini AI ile akıllı parça sınıflandırması.
+          </p>
+          <div class="feature-tag-list">
+            <span class="feature-tag">Offline Heuristic</span>
+            <span class="feature-tag">Gemini API</span>
+            <span class="feature-tag">PCD Circle Audit</span>
+          </div>
+        </div>
+
+        <!-- Feature 4 -->
+        <div class="feature-card">
+          <div class="feature-icon-wrap">🧩</div>
+          <h3 class="feature-title" data-i18n="feat_4_title">Çok Gövdeli Montaj Ayrıştırma</h3>
+          <p class="feature-desc" data-i18n="feat_4_desc">
+            Tek STL dosyasındaki bağımsız mekanik parçaları ayırır, 3D patlatılmış görünüm ve solo inceleme sunar.
+          </p>
+          <div class="feature-tag-list">
+            <span class="feature-tag">Assembly Split</span>
+            <span class="feature-tag">Exploded View</span>
+            <span class="feature-tag">Solo Inspection</span>
+          </div>
+        </div>
+
+        <!-- Feature 5 -->
+        <div class="feature-card">
+          <div class="feature-icon-wrap">📐</div>
+          <h3 class="feature-title" data-i18n="feat_5_title">DfAM Askı & Katmanlı İmalat Denetimi</h3>
+          <p class="feature-desc" data-i18n="feat_5_desc">
+            45°/60° kritik aşırı sarkan yüzey haritası, tabla temas alanı ve devrilme momenti hesabı.
+          </p>
+          <div class="feature-tag-list">
+            <span class="feature-tag">Overhang Heatmap</span>
+            <span class="feature-tag">Toppling Risk</span>
+            <span class="feature-tag">Optimal Orientation</span>
+          </div>
+        </div>
+
+        <!-- Feature 6 -->
+        <div class="feature-card">
+          <div class="feature-icon-wrap">🔗</div>
+          <h3 class="feature-title" data-i18n="feat_6_title">1-Tık Fusion 360 & FreeCAD</h3>
+          <p class="feature-desc" data-i18n="feat_6_desc">
+            Üretilen STEP dosyasını tek bir tuşla Autodesk Fusion 360 veya FreeCAD ortamında otomatik açar.
+          </p>
+          <div class="feature-tag-list">
+            <span class="feature-tag">Autodesk Fusion</span>
+            <span class="feature-tag">FreeCAD</span>
+            <span class="feature-tag">Direct IPC</span>
+          </div>
+        </div>
+
+        <!-- Feature 7 -->
+        <div class="feature-card">
+          <div class="feature-icon-wrap">📜</div>
+          <h3 class="feature-title" data-i18n="feat_7_title">Kalıcı Dönüşüm Kayıt Defteri</h3>
+          <p class="feature-desc" data-i18n="feat_7_desc">
+            Dönüşüm süreleri, faset sadeleştirme yüzdeleri ve dosya boyutları yerel veritabanında saklanır.
+          </p>
+          <div class="feature-tag-list">
+            <span class="feature-tag">Local Ledger</span>
+            <span class="feature-tag">JSON History</span>
+            <span class="feature-tag">Audit Trail</span>
+          </div>
+        </div>
+
+        <!-- Feature 8 -->
+        <div class="feature-card">
+          <div class="feature-icon-wrap">⚡</div>
+          <h3 class="feature-title" data-i18n="feat_8_title">Taşınabilir Bağımsız Masaüstü EXE</h3>
+          <p class="feature-desc" data-i18n="feat_8_desc">
+            Python kurulumuna gerek kalmadan çift tıkla çalışan hafif ve bağımsız Windows 64-bit masaüstü mimarisi.
+          </p>
+          <div class="feature-tag-list">
+            <span class="feature-tag">Standalone EXE</span>
+            <span class="feature-tag">Zero Install</span>
+            <span class="feature-tag">PyInstaller Optimized</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive Pipeline Simulator Section -->
+  <section class="pipeline-section" id="pipeline">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag" data-i18n="tag_pipeline">Dönüşüm Hattı</span>
+        <h2 class="section-title" data-i18n="title_pipeline">Adım Adım B-Rep Katılaştırma Mimarisi</h2>
+        <p class="section-desc" data-i18n="desc_pipeline">
+          Milyonlarca üçgenden parametrik CAD katısına uzanan 4 aşamalı matematiksel süreç.
+        </p>
+      </div>
+
+      <!-- Stepper navigation -->
+      <div class="pipeline-stepper">
+        <div class="step-tab active" data-step="0">
+          <span class="step-number">1</span>
+          <span class="step-title-text" data-i18n="step_1_tab">1. Mesh İçe Aktarım</span>
+        </div>
+        <div class="step-tab" data-step="1">
+          <span class="step-number">2</span>
+          <span class="step-title-text" data-i18n="step_2_tab">2. Akıllı Ütüleme</span>
+        </div>
+        <div class="step-tab" data-step="2">
+          <span class="step-number">3</span>
+          <span class="step-title-text" data-i18n="step_3_tab">3. B-Rep Dikimi</span>
+        </div>
+        <div class="step-tab" data-step="3">
+          <span class="step-number">4</span>
+          <span class="step-title-text" data-i18n="step_4_tab">4. STEP & Fusion 360</span>
+        </div>
+      </div>
+
+      <!-- Interactive Display Card -->
+      <div class="pipeline-display-card">
+        <div class="pipeline-details">
+          <h3 id="pipeline-step-title">Adım 1: Çok Formatlı Mesh İçe Aktarımı</h3>
+          <p id="pipeline-step-desc">
+            STL, 3MF, OBJ ve PLY mesh dosyaları yerel C++ ayrıştırıcı ile okunur. Manifold topoloji, delik sayısı ve normaller anında doğrulanır.
+          </p>
+          <div class="pipeline-specs-list" id="pipeline-specs-container">
+            <!-- Dynamic specs -->
+          </div>
+        </div>
+
+        <div class="pipeline-telemetry">
+          <div class="telemetry-header">
+            <span>TERMINAL TELEMETRY</span>
+            <span style="color: var(--emerald-accent);">LIVE</span>
+          </div>
+          <div class="telemetry-log" id="pipeline-logs-container">
+            <!-- Dynamic logs -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Technical Architecture Section -->
+  <section class="architecture-section" id="architecture">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag" data-i18n="tag_arch">Yazılım Mimarisi</span>
+        <h2 class="section-title" data-i18n="title_arch">Sağlam ve Optimize Modüler Mimari</h2>
+        <p class="section-desc" data-i18n="desc_arch">
+          Three.js WebGL görselleştirme katmanından yerel C++ OpenCASCADE çekirdeğine kadar yüksek performans.
+        </p>
+      </div>
+
+      <div class="arch-layers-grid">
+        <!-- Layer 1 -->
+        <div class="arch-layer-card">
+          <div class="arch-layer-header">
+            <span>🌐</span>
+            <span data-i18n="arch_l1_header">Katman 1</span>
+          </div>
+          <h4 class="arch-layer-title" data-i18n="arch_l1_title">Kullanıcı Arayüzü & 3D WebGL</h4>
+          <ul class="arch-components-list">
+            <li>Three.js WebGL Renderer</li>
+            <li>Interactive Raycasting</li>
+            <li>Glassmorphism UI Engine</li>
+            <li>i18n Runtime (TR / EN)</li>
+          </ul>
+        </div>
+
+        <!-- Layer 2 -->
+        <div class="arch-layer-card">
+          <div class="arch-layer-header">
+            <span>⚡</span>
+            <span data-i18n="arch_l2_header">Katman 2</span>
+          </div>
+          <h4 class="arch-layer-title" data-i18n="arch_l2_title">Yerel Windows API Köprüsü</h4>
+          <ul class="arch-components-list">
+            <li>pywebview Windows Edge Bridge</li>
+            <li>Windows 8.3 Safe Short Path</li>
+            <li>Asynchronous IPC Threads</li>
+            <li>File Association Handler</li>
+          </ul>
+        </div>
+
+        <!-- Layer 3 -->
+        <div class="arch-layer-card">
+          <div class="arch-layer-header">
+            <span>⚙️</span>
+            <span data-i18n="arch_l3_header">Katman 3</span>
+          </div>
+          <h4 class="arch-layer-title" data-i18n="arch_l3_title">Geometri & CAD Çekirdeği</h4>
+          <ul class="arch-components-list">
+            <li>OpenCASCADE (OCP) C++ Engine</li>
+            <li>Titan CAD TrueForm Recognizer</li>
+            <li>Trimesh & NumPy Vectorization</li>
+            <li>Taubin Shrink-Free Smoothing</li>
+          </ul>
+        </div>
+
+        <!-- Layer 4 -->
+        <div class="arch-layer-card">
+          <div class="arch-layer-header">
+            <span>🧠</span>
+            <span data-i18n="arch_l4_header">Katman 4</span>
+          </div>
+          <h4 class="arch-layer-title" data-i18n="arch_l4_title">Yapay Zeka & Sezgisellik</h4>
+          <ul class="arch-components-list">
+            <li>100% Offline Geometric Classifier</li>
+            <li>Dihedral Angle Histogram</li>
+            <li>Optional Gemini AI 2.5 Flash</li>
+            <li>PCD Bolt Pitch Auto-Detect</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Comparison Section -->
+  <section class="comparison-section" id="comparison">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag" data-i18n="tag_compare">Karşılaştırma</span>
+        <h2 class="section-title" data-i18n="title_compare">Mesh2Step vs Diğer Yöntemler</h2>
+        <p class="section-desc" data-i18n="desc_compare">
+          Neden mühendisler ve tasarımcılar standart araçlar yerine Mesh2Step 3D Studio'yu tercih ediyor?
+        </p>
+      </div>
+
+      <div class="table-wrapper">
+        <table class="comparison-table">
+          <thead>
+            <tr>
+              <th data-i18n="th_feature">Özellik / Yetenek</th>
+              <th class="highlight-col" style="color: var(--cyan-primary);" data-i18n="th_mesh2step">Mesh2Step 3D Studio</th>
+              <th data-i18n="th_standard_cad">Standart CAD Araçları</th>
+              <th data-i18n="th_cloud">Bulut Çeviriciler</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td data-i18n="row_1_title">%100 Yerel & Çevrimdışı Güvenlik</td>
+              <td class="highlight-col"><span class="check-icon">✓ Tamamen Yerel (0 KB Bulut)</span></td>
+              <td><span class="check-icon">✓ Yerel</span></td>
+              <td><span class="cross-icon">✕ Zorunlu Dosya Yükleme</span></td>
+            </tr>
+            <tr>
+              <td data-i18n="row_2_title">Eşdüzlemli Yüzey Birleştirme (%90 Sadeleştirme)</td>
+              <td class="highlight-col"><span class="check-icon">✓ Otomatik B-Rep Düzlem Birleştirme</span></td>
+              <td><span class="cross-icon">✕ Ham Faset Üçgenleri Kalır</span></td>
+              <td><span class="cross-icon">✕ Çoğunlukla Desteklenmez</span></td>
+            </tr>
+            <tr>
+              <td data-i18n="row_3_title">Keskin Kenar Kilitli Mesh Ütüleme (Dihedral Lock)</td>
+              <td class="highlight-col"><span class="check-icon">✓ 25°-45° Kenar Kilitlemeli Taubin</span></td>
+              <td><span class="cross-icon">✕ Yok / Kenarları Yuvarlatır</span></td>
+              <td><span class="cross-icon">✕ Yok</span></td>
+            </tr>
+            <tr>
+              <td data-i18n="row_4_title">Çok Gövdeli Montaj Ayrıştırma & Exploded View</td>
+              <td class="highlight-col"><span class="check-icon">✓ 3D Patlatılmış Görünüm & Solo Mod</span></td>
+              <td><span class="cross-icon">✕ Manuel Tek Tek Ayırma</span></td>
+              <td><span class="cross-icon">✕ Tek Parça Olarak İşler</span></td>
+            </tr>
+            <tr>
+              <td data-i18n="row_5_title">DfAM Askı Açısı & Baskı Yönü Analizi</td>
+              <td class="highlight-col"><span class="check-icon">✓ Entegre 45°/60° Isı Haritası</span></td>
+              <td><span class="cross-icon">✕ Harici Eklenti Gerekir</span></td>
+              <td><span class="cross-icon">✕ Yok</span></td>
+            </tr>
+            <tr>
+              <td data-i18n="row_6_title">Fusion 360 & FreeCAD 1-Tık Entegrasyonu</td>
+              <td class="highlight-col"><span class="check-icon">✓ Tek Tıkla Doğrudan CAD Açılışı</span></td>
+              <td><span class="cross-icon">✕ Manuel Dosya Aç / İçe Aktar</span></td>
+              <td><span class="cross-icon">✕ Manuel İndir & Aç</span></td>
+            </tr>
+            <tr>
+              <td data-i18n="row_7_title">Açık Kaynak Kod & MIT Lisansı</td>
+              <td class="highlight-col"><span class="check-icon">✓ %100 Ücretsiz & MIT Lisansı</span></td>
+              <td><span class="cross-icon">✕ Yüksek Yıllık Lisans Ücreti</span></td>
+              <td><span class="cross-icon">✕ Model / Boyut Başına Ücret</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Download & Quickstart Section -->
+  <section class="download-section" id="download">
+    <div class="container">
+      <div class="download-banner">
+        <div class="banner-content">
+          <h2 data-i18n="banner_title">Hemen Başlayın — Ücretsiz ve Açık Kaynak</h2>
+          <p data-i18n="banner_desc">
+            Windows için hazır taşınabilir portable EXE paketini indirin veya GitHub deposunu klonlayarak Python ile geliştirin.
+          </p>
+          <div style="display: flex; gap: 14px; flex-wrap: wrap;">
+            <a href="https://github.com/okanyyurt/Mesh2Step/releases" target="_blank" rel="noopener noreferrer" class="btn btn-cyan btn-lg">
+              <span>📦</span>
+              <span data-i18n="btn_download_zip">v3.23 Portable EXE İndir (Zip)</span>
+            </a>
+            <a href="https://github.com/okanyyurt/Mesh2Step/releases" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-lg">
+              <span>📜</span>
+              <span data-i18n="btn_view_releases">GitHub Sürüm Notları</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Terminal Quickstart Box -->
+        <div class="terminal-box">
+          <div class="terminal-header">
+            <span class="term-title">BASH / TERMINAL QUICKSTART</span>
+            <button class="term-copy-btn" onclick="copyToClipboard('git clone https://github.com/okanyyurt/Mesh2Step.git\ncd Mesh2Step\npip install -r requirements.txt\npython app.py', this)">Kopyala</button>
+          </div>
+          <div class="terminal-body">
+            <div class="code-cmd">git clone https://github.com/okanyyurt/Mesh2Step.git</div>
+            <div class="code-cmd">cd Mesh2Step</div>
+            <div class="code-cmd">pip install -r requirements.txt</div>
+            <div class="code-cmd">Baslat_CAD_Studio.bat</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="faq-section" id="faq">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag" data-i18n="tag_faq">Sıkça Sorulan Sorular</span>
+        <h2 class="section-title" data-i18n="title_faq">Aklınıza Takılabilecek Sorular</h2>
+      </div>
+
+      <div class="faq-grid">
+        <!-- Q1 -->
+        <div class="faq-item active">
+          <div class="faq-question">
+            <span data-i18n="faq_q1">Mesh2Step'i kullanmak için internet bağlantısı veya Gemini API anahtarı zorunlu mu?</span>
+            <span class="faq-arrow">▼</span>
+          </div>
+          <div class="faq-answer" data-i18n="faq_a1">
+            Hayır! Mesh2Step %100 yerel ve çevrimdışı çalışan bir yazılımdır. Tüm CAD dönüşümleri, B-Rep dikişi, yüzey iyileştirme ve DfAM analizleri tamamen bilgisayarınızın donanımında gerçekleşir. Google Gemini API anahtarı tamamen isteğe bağlı bir akıllı analiz asistanıdır.
+          </div>
+        </div>
+
+        <!-- Q2 -->
+        <div class="faq-item">
+          <div class="faq-question">
+            <span data-i18n="faq_q2">Oluşturulan STEP dosyasını Autodesk Fusion 360 veya SolidWorks doğrudan açabilir mi?</span>
+            <span class="faq-arrow">▼</span>
+          </div>
+          <div class="faq-answer" data-i18n="faq_a2">
+            Evet, kesinlikle! Mesh2Step uluslararası ISO 10303-21 STEP AP214 standardında katı B-Rep modelleri üretir. Fusion 360, SolidWorks, Siemens NX, CATIA, FreeCAD ve Inventor ile tam uyumludur. Ayrıca arayüzdeki 'Fusion'da Aç' butonuyla tek tıkla doğrudan Fusion 360'a gönderebilirsiniz.
+          </div>
+        </div>
+
+        <!-- Q3 -->
+        <div class="faq-item">
+          <div class="faq-question">
+            <span data-i18n="faq_q3">3D tarayıcıdan (KIRI Engine, LiDAR) gelen organik modelleri de katıya çevirir mi?</span>
+            <span class="faq-arrow">▼</span>
+          </div>
+          <div class="faq-answer" data-i18n="faq_a3">
+            Evet. Mesh2Step'in Akıllı İyileştirme (Healing) motorunda bulunan Taubin ve Bilateral filtreleri tarama gürültülerini hacim kaybı yaşatmadan pürüzsüzleştirir ve manifold katı B-Rep geometriye dönüştürür.
+          </div>
+        </div>
+
+        <!-- Q4 -->
+        <div class="faq-item">
+          <div class="faq-question">
+            <span data-i18n="faq_q4">Mesh2Step ticari projelerde ücretsiz olarak kullanılabilir mi?</span>
+            <span class="faq-arrow">▼</span>
+          </div>
+          <div class="faq-answer" data-i18n="faq_a4">
+            Evet. Mesh2Step 3D Studio MIT Lisansı ile açık kaynak kodlu olarak sunulmaktadır. Hem bireysel hem ticari AR-GE projelerinizde kısıtlama olmaksızın kullanabilirsiniz.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="brand-link">
+            <div class="brand-logo-icon">
+              <svg viewBox="0 0 36 36" width="32" height="32" fill="none">
+                <polygon points="18,3 33,12 27,33 9,33 3,12" stroke="#00f2fe" stroke-width="2" fill="rgba(0, 242, 254, 0.1)"/>
+                <polygon points="12,15 24,15 18,33" fill="#00f2fe" opacity="0.8"/>
+              </svg>
+            </div>
+            <div class="brand-text">
+              <span class="brand-title">Mesh2Step Studio</span>
+              <span class="brand-subtitle">mesh2step.gryntech.net</span>
+            </div>
+          </div>
+          <p data-i18n="footer_desc">
+            Yüksek Hassasiyetli Mesh → Katı CAD B-Rep STEP Çevirici, Akıllı Yüzey İyileştirme ve DfAM Mühendislik Stüdyosu.
+          </p>
+        </div>
+
+        <div class="footer-col">
+          <h4 data-i18n="footer_quick_links">Hızlı Bağlantılar</h4>
+          <ul class="footer-links">
+            <li><a href="#problem">Neden Mesh2Step?</a></li>
+            <li><a href="#features">Yetenekler</a></li>
+            <li><a href="#pipeline">Dönüşüm Hattı</a></li>
+            <li><a href="#architecture">Mimari</a></li>
+            <li><a href="#download">İndir (v3.23)</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4 data-i18n="footer_community">Topluluk & Kaynaklar</h4>
+          <ul class="footer-links">
+            <li><a href="https://github.com/okanyyurt/Mesh2Step" target="_blank" rel="noopener noreferrer">GitHub Deposu</a></li>
+            <li><a href="https://github.com/okanyyurt/Mesh2Step/releases" target="_blank" rel="noopener noreferrer">Sürümler & Yayınlar</a></li>
+            <li><a href="https://github.com/okanyyurt/Mesh2Step/blob/main/CHANGELOG.md" target="_blank" rel="noopener noreferrer">Sürüm Notları (Changelog)</a></li>
+            <li><a href="https://github.com/okanyyurt/Mesh2Step/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener noreferrer">Katkıda Bulunma</a></li>
+            <li><a href="https://github.com/okanyyurt/Mesh2Step/blob/main/SECURITY.md" target="_blank" rel="noopener noreferrer">Güvenlik Politikası</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4 data-i18n="footer_developer">Geliştirici & Lisans</h4>
+          <ul class="footer-links">
+            <li><a href="https://www.okanyesilyurt.com" target="_blank" rel="noopener noreferrer">👨‍💻 Okan YEŞİLYURT (Web)</a></li>
+            <li><a href="https://github.com/okanyyurt" target="_blank" rel="noopener noreferrer">GitHub: @okanyyurt</a></li>
+            <li><a href="https://mesh2step.gryntech.net">🌐 mesh2step.gryntech.net</a></li>
+            <li><a href="https://github.com/okanyyurt/Mesh2Step/blob/main/LICENSE" target="_blank" rel="noopener noreferrer">Lisans: MIT (Açık Kaynak)</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>
+          © 2026 Mesh2Step 3D Studio • Designed & Developed by <a href="https://www.okanyesilyurt.com" target="_blank" rel="noopener noreferrer" style="color: var(--cyan-primary);">Okan YEŞİLYURT</a>
+        </div>
+        <div data-i18n="footer_rights">
+          Tüm hakları saklıdır. MIT Lisansı ile lisanslanmıştır.
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Floating Back to Top Button -->
+  <button class="back-to-top" id="back-to-top" aria-label="Yukarı Çık">▲</button>
+
+  <!-- Three.js and OrbitControls (Local with CDN fallback) -->
+  <script src="assets/js/three.min.js"></script>
+  <script src="assets/js/OrbitControls.js"></script>
+  <script>
+    // Fallback if local scripts didn't load
+    if (typeof THREE === 'undefined') {
+      document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"><\/script>');
+      document.write('<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"><\/script>');
+    }
+  </script>
+
+  <!-- Main Application Script -->
+  <script src="app.js"></script>
+</body>
+</html>

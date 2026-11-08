@@ -1,12 +1,12 @@
 {
-  "version": "3.22",
+  "version": "3.23",
   "major": 3,
-  "minor": 22,
-  "release_date": "2026-09-29",
-  "release_time": "18:06:23",
-  "formatted_datetime": "29.09.2026 18:06",
+  "minor": 23,
+  "release_date": "2026-11-08",
+  "release_time": "23:15:59",
+  "formatted_datetime": "08.11.2026 23:15",
   "app_name": "Mesh2Step 3D Studio",
-  "display_text": "v3.22",
+  "display_text": "v3.23",
   "channel": "Stable",
-  "description": "Katı model dönüştürme sonuç tablosuna % cinsinden B-Rep yüzey sadeleştirme oranı eklendi"
+  "description": "Resmi web sitesi portali (mesh2step.gryntech.net) yayinlandi, public_html olusturuldu, repo web adresi guncellendi ve tum eski dizin baglamlari yeni proje yoluna aktarildi"
 }

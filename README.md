@@ -2,21 +2,21 @@
 
 <div align="center">
 
-[![Version](https://img.shields.io/badge/Version-v3.21%20(Stable)-00f2fe.svg?style=for-the-badge)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/Version-v3.23%20(Stable)-00f2fe.svg?style=for-the-badge)](CHANGELOG.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.9%20%7C%203.10%20%7C%203.11-brightgreen.svg?style=for-the-badge)](https://www.python.org/)
 [![WebGL](https://img.shields.io/badge/WebGL-Three.js-000000.svg?style=for-the-badge)](https://threejs.org/)
 [![CAD Kernel](https://img.shields.io/badge/CAD%20Kernel-OpenCASCADE%20%2F%20Titan-ea580c.svg?style=for-the-badge)](https://dev.opencascade.org/)
 [![Languages](https://img.shields.io/badge/Languages-Türkçe%20%7C%20English-10b981.svg?style=for-the-badge)](#-dil-seçimi--language-quick-jump)
 [![Author](https://img.shields.io/badge/Author-Okan%20YEŞİLYURT-8b5cf6.svg?style=for-the-badge)](https://www.okanyesilyurt.com)
-[![Website](https://img.shields.io/badge/Website-okanyesilyurt.com-00f2fe.svg?style=for-the-badge)](https://www.okanyesilyurt.com)
+[![Website](https://img.shields.io/badge/Website-mesh2step.gryntech.net-00f2fe.svg?style=for-the-badge)](https://mesh2step.gryntech.net)
 
 <p align="center">
   <strong>Yüksek Hassasiyetli Mesh (STL, 3MF, OBJ, PLY) → Katı CAD B-Rep STEP Çevirici, Akıllı Yüzey İyileştirme ve DfAM Mühendislik Stüdyosu</strong><br>
   <em>High-Precision Mesh (STL, 3MF, OBJ, PLY) → Solid CAD B-Rep STEP Converter, Smart Feature-Preserving Healing & DfAM Engineering Studio</em>
 </p>
 
-[🌐 Web Sitesi / Website](https://www.okanyesilyurt.com) • [📦 GitHub Deposu / Repository](https://github.com/okanyyurt/Mesh2Step) • [📜 Sürüm Notları / Changelog](CHANGELOG.md) • [🤝 Katkıda Bulunma / Contributing](CONTRIBUTING.md) • [🔒 Güvenlik / Security](SECURITY.md)
+[🌐 Web Sitesi / Website](https://mesh2step.gryntech.net) • [📦 GitHub Deposu / Repository](https://github.com/okanyyurt/Mesh2Step) • [📜 Sürüm Notları / Changelog](CHANGELOG.md) • [🤝 Katkıda Bulunma / Contributing](CONTRIBUTING.md) • [🔒 Güvenlik / Security](SECURITY.md)
 
 </div>
 
@@ -334,7 +334,8 @@ You can create `config.json` from `config.example.json` or adjust settings direc
 
 ### Geliştirici & Yazar / Author
 - **Okan YEŞİLYURT**
-- **Web Sitesi / Website:** [www.okanyesilyurt.com](https://www.okanyesilyurt.com)
+- **Proje Web Sitesi / Project Website:** [https://mesh2step.gryntech.net](https://mesh2step.gryntech.net)
+- **Geliştirici Web Sitesi / Developer Website:** [www.okanyesilyurt.com](https://www.okanyesilyurt.com)
 - **GitHub:** [@okanyyurt](https://github.com/okanyyurt)
 - **Resmi Depo / Official Repository:** [https://github.com/okanyyurt/Mesh2Step](https://github.com/okanyyurt/Mesh2Step)
 
